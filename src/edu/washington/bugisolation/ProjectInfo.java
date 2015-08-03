@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ProjectInfo {
 
-	public static final String D4J_LOCATION = "/Users/dpang/workspace/defects4j/";
+	public static final String D4J_LOCATION = "/Users/dpang/workspace/defects4j-github/";
 	public static final String WORKSPACE = "/Users/dpang/workspace/";
 
 	/**
