@@ -113,11 +113,11 @@ public class TrianglePI implements ProjectInfo {
 		return null;
 	}
 	
-	public String getModifiedClass() {
+	public String getModifiedFullyQualifiedName() {
 		return null;
 	}
 	
-	public String getModifiedClassPath(String extension) {
+	public String getModifiedPath(String extension) {
 		return modifiedClass + extension;
 	}
 

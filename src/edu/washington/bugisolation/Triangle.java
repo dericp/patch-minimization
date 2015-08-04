@@ -116,10 +116,10 @@ public class Triangle implements Project {
 		
 		List<String> fixedFile = Operations.fileToLines (
 				ProjectInfo.WORKSPACE + projectInfo.getFixedName() 
-				+ '/' + projectInfo.getModifiedClassPath(".java"));
+				+ '/' + projectInfo.getModifiedPath(".java"));
 		List<String> buggyFile = Operations.fileToLines (
 				ProjectInfo.WORKSPACE + projectInfo.getBuggyName()
-				+ '/' + projectInfo.getModifiedClassPath(".java"));
+				+ '/' + projectInfo.getModifiedPath(".java"));
 		projectInfo.setFixedFile(fixedFile);
 		projectInfo.setBuggyFile(buggyFile);
 			

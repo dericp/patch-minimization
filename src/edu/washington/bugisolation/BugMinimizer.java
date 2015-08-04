@@ -73,28 +73,6 @@ public class BugMinimizer {
 		}
 	
 		List<String> diffLines;
-
-		/* if (d4jPI.isFixedToBuggy()) {
-			diffLines = DiffUtils.generateUnifiedDiff (
-					d4jPI.getDiffPathA()
-					, d4jPI.getDiffPathB()
-					, d4jPI.getFixedFile()
-					, minimizedPatch
-					, 3);
-			Operations.linesToFile (
-			        diffLines, ProjectInfo.WORKSPACE + "min_diffs/" + d4jPI.getProjectName()
-			        + '_' + d4jPI.getProjectVersion() + "_fixed_to_buggy_min.diff");
-		} else {
-			diffLines = DiffUtils.generateUnifiedDiff (
-					d4jPI.getDiffPathA() 
-					, d4jPI.getDiffPathB()
-					, d4jPI.getBuggyFile()
-					, minimizedPatch
-					, 3);
-			Operations.linesToFile (
-			        diffLines, ProjectInfo.WORKSPACE + "min_diffs/" + d4jPI.getProjectName()
-	                + '_' + d4jPI.getProjectVersion() + "_buggy_to_fixed_min.diff");
-		} */
 		
 		diffLines = DiffUtils.generateUnifiedDiff (
 		        d4jPI.getDiffPathA()

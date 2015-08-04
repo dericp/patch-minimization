@@ -1,8 +1,12 @@
 package edu.washington.bugisolation;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Properties;
 
 import difflib.*;
 import edu.washington.bugisolation.util.Operations;
@@ -63,13 +67,12 @@ public class Defects4J implements Project {
 	public void checkout() {
 		checkoutFixed();
 		checkoutBuggy();
-		//setExcludedTests();
-		copyExcludedTests();
+		setExcludedTests();
 		
 		gitOperation("add -A", projectInfo.getFixedDirectory());
 		gitOperation (
 		        "rm -f " + projectInfo.getFixedDirectory() + "target/classes/"
-		        + projectInfo.getModifiedClassPath("*")
+		        + projectInfo.getModifiedPath("*")
 		        , projectInfo.getFixedDirectory());
 		gitOperation("commit -mjava", projectInfo.getFixedDirectory());
 		gitOperation (
@@ -79,7 +82,7 @@ public class Defects4J implements Project {
 		gitOperation("add -A", projectInfo.getBuggyDirectory());
 		gitOperation (
 		        "rm -f " + projectInfo.getBuggyDirectory()
-		        + "target/classes/" + projectInfo.getModifiedClassPath("*")
+		        + "target/classes/" + projectInfo.getModifiedPath("*")
 		        , projectInfo.getBuggyDirectory());
 		gitOperation("commit -mjava", projectInfo.getBuggyDirectory());
 		gitOperation (
@@ -107,84 +110,48 @@ public class Defects4J implements Project {
 		compileBuggy();
 	}
 	
-	/* temporary method */
-	private void copyExcludedTests() {
-	    List<String> excludedTests = Operations.fileToLines(ProjectInfo.WORKSPACE + "defects4j.build.properties");
-	       Operations.linesToFile (
-	                excludedTests, projectInfo.getFixedDirectory() + "defects4j.build.properties");
-	        Operations.linesToFile (
-	                excludedTests, projectInfo.getBuggyDirectory() + "defects4j.build.properties");
-	}
-	
 	private void setExcludedTests() {
-		d4jOperation("export -p all.tests -o all.tests", projectInfo.getFixedDirectory());
+	    System.out.println("Setting excluded tests");
+	    
+		d4jOperation("export -p tests.all -o tests.all", projectInfo.getFixedDirectory());
+		d4jOperation("export -p tests.relevant -o tests.relevant", projectInfo.getFixedDirectory());
 		
-		List<String> testNames = Operations.fileToLines(projectInfo.getFixedDirectory() + "all.tests");
-		List<String> testClassPathes =  new LinkedList<String>();
+		List<String> testNames = Operations.fileToLines(projectInfo.getFixedDirectory() + "tests.all");
+		List<String> relevantTests = Operations.fileToLines(projectInfo.getFixedDirectory() + "tests.relevant");
 		
-		for (int i = 0; i < testNames.size(); ++i) {
-			/* add each test name but truncate to just the file-path of the test */
-			testClassPathes.add(testNames.get(i).replace(projectInfo.getFixedDirectory() + projectInfo.getTestDirectory(), ""));
-		}
+		testNames.removeAll(relevantTests);
 		
-		/* now remove each irrelevant test */
-		for (Iterator<String> iter = testClassPathes.iterator(); iter.hasNext();) {
-			String test = iter.next();
-			System.out.println("monitoring " + test);
-			
-			String temp = test.replace('/', '.');
-			temp = temp.substring(0, test.indexOf(".java"));
-			System.out.println("input: " + temp);
-			
-			int exitVal;
-			exitVal = d4jOperation("monitor.test -t " + temp, projectInfo.getFixedDirectory());
-			List<String> loadedClasses;
-			loadedClasses = Operations.fileToLines(projectInfo.getFixedDirectory() + "/loaded_classes.src");
-			if (exitVal == 0 && loadedClasses.contains(projectInfo.getModifiedClass())) {
-				iter.remove();
-				System.out.println("This test was relevant");
-			}
-		}
-		
-		System.out.println("finished monitoring tests");
-		
-		List<String> d4jBuildProps = Operations.fileToLines(projectInfo.getFixedDirectory() + "defects4j.build.properties");
-		String excludedTests = "";
-		
-		for (Iterator<String> iter = d4jBuildProps.iterator(); iter.hasNext();) {
-		    String line = iter.next();
-		    if (line.contains("d4j.tests.exclude=")) {
-		        excludedTests = line + ", ";
-		        iter.remove();
-		        break;
+		Properties props = new Properties();
+		try {
+		    props.load(new FileInputStream(projectInfo.getFixedDirectory() + "defects4j.build.properties"));
+		    String excludedTests = props.getProperty("d4j.tests.exclude");
+		    String allExcludedTests = "";
+		    if (excludedTests != null) {
+		        allExcludedTests += excludedTests;
+		        for (String name : testNames) {
+		            allExcludedTests += ',' + name.replace('.', '/') + ".java";
+		        }
+		    } else {
+		        if (!testNames.isEmpty()) {
+		            allExcludedTests = testNames.get(0).replace('.', '/') + ".java";
+		            for (int i = 1; i < testNames.size(); i++) {
+		                allExcludedTests += ',' + testNames.get(i).replace('.', '/') + ".java";
+		            }
+		        }
 		    }
+		    props.put("d4j.tests.exclude", allExcludedTests);
+		    OutputStream fixedD4JProps = new FileOutputStream(projectInfo.getFixedDirectory() + "defects4j.build.properties");
+		    OutputStream buggyD4JProps = new FileOutputStream(projectInfo.getBuggyDirectory() + "defects4j.build.properties");
+		    
+		    props.store(fixedD4JProps, "Excludes irrelevant tests");
+		    props.store(buggyD4JProps, "excludes irrelevant tests");
+		} catch (FileNotFoundException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		} catch (IOException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
 		}
-		
-		if (excludedTests.isEmpty()) {
-		    excludedTests = "d4j.tests.exclude=";
-		}
-		
-		for (String testPath : testClassPathes) {
-		    excludedTests += (testPath + ", ");
-		}
-		
-		d4jBuildProps.add(excludedTests);
-		/* for (int i = 0; i < d4jBuildProps.size(); ++i) {
-			String temp = d4jBuildProps.get(i);
-			if (temp.contains("d4j.tests.exclude=")) {
-				for (String testPath : testClassPathes) {
-					temp += (", " + testPath);
-				}
-				d4jBuildProps.remove(i);
-				d4jBuildProps.add(i, temp);
-				break;
-			}
-		} */
-		
-		Operations.linesToFile (
-		        d4jBuildProps, projectInfo.getFixedDirectory() + "defects4j.build.properties");
-		Operations.linesToFile (
-		        d4jBuildProps, projectInfo.getBuggyDirectory() + "defects4j.build.properties");
 	}
 	
 	/* (non-Javadoc)
@@ -193,13 +160,7 @@ public class Defects4J implements Project {
 	@Override
 	public List<String> getFailingTests() {
 		System.out.println("Getting failing tests");
-		/*
-		if (projectInfo.isFixedToBuggy()) {
-			return Operations.getTests(projectInfo.getFixedDirectory() + ".failing_tests");
-		} else {
-			return Operations.getTests(projectInfo.getBuggyDirectory() + ".failing_tests");
-		}
-		*/
+		
 		return Operations.getTests(projectInfo.getModifiedDirectory() + ".failing_tests");
 	}
 	
@@ -212,10 +173,10 @@ public class Defects4J implements Project {
 		
 		List<String> fixedFile = Operations.fileToLines (
 				projectInfo.getFixedDirectory()
-				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedClassPath(".java"));
+				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedPath(".java"));
 		List<String> buggyFile = Operations.fileToLines (
 				projectInfo.getBuggyDirectory()
-				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedClassPath(".java"));
+				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedPath(".java"));
 		projectInfo.setFixedFile(fixedFile);
 		projectInfo.setBuggyFile(buggyFile);
 		
@@ -233,16 +194,6 @@ public class Defects4J implements Project {
 	public int applyPatch() {
 		System.out.println("Applying the current patch");
 		
-		/*
-		if (projectInfo.isFixedToBuggy()) {
-			return gitOperation (
-					"apply " + ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff"
-					, projectInfo.getFixedDirectory());
-		} else {
-			return gitOperation (
-					"apply " + ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff"
-					, projectInfo.getBuggyDirectory());
-		} */
 		return gitOperation (
                 "apply " + ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff"
                 , projectInfo.getModifiedDirectory());
@@ -261,12 +212,6 @@ public class Defects4J implements Project {
 	 */
 	@Override
 	public int compileModified() {
-	    /*
-		if (projectInfo.isFixedToBuggy()) {
-			return compileFixed();
-		} else {
-			return compileBuggy();
-		} */
 	    return d4jOperation("compile", projectInfo.getModifiedDirectory());
 	}
 	
@@ -275,12 +220,6 @@ public class Defects4J implements Project {
 	 */
 	@Override
 	public int test() {
-	    /*
-		if (projectInfo.isFixedToBuggy()) {
-			return d4jOperation("test", projectInfo.getFixedDirectory());
-		} else {
-			return d4jOperation("test", projectInfo.getBuggyDirectory());
-		} */
 	    return d4jOperation("test", projectInfo.getModifiedDirectory());
 	}
 	
@@ -289,24 +228,9 @@ public class Defects4J implements Project {
 	 */
 	@Override
 	public void reset() {
-	    /*
-		if (projectInfo.isFixedToBuggy()) {
-			gitOperation (
-					"reset --hard " + "D4J_" + projectInfo.getFixedName() + "_reltests"
-					, projectInfo.getFixedDirectory());
-			gitOperation("clean -xfd", projectInfo.getFixedDirectory());
-		} else {
-			gitOperation (
-					"reset --hard " + "D4J_" + projectInfo.getBuggyName() + "_reltests"
-					, projectInfo.getBuggyDirectory());
-			gitOperation("clean -xfd", projectInfo.getBuggyDirectory());
-		} */
-		
         gitOperation (
                 "reset --hard " + "D4J_" + projectInfo.getModifiedName() + "_reltests"
                 , projectInfo.getModifiedDirectory());
         gitOperation("clean -xfd", projectInfo.getModifiedDirectory());
-		
-		
 	}
 }

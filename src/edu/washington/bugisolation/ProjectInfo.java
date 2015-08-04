@@ -120,7 +120,7 @@ public interface ProjectInfo {
 	 * 
 	 * @return	a String, the name of the modified class
 	 */
-	public abstract String getModifiedClass();
+	public abstract String getModifiedFullyQualifiedName();
 	
 	/**
 	 * Gets the file-path in the src directory of the modified class
@@ -128,7 +128,7 @@ public interface ProjectInfo {
 	 * @param extension 	a String, denoting the extension of the file
 	 * @return				a String that is the file-path of the modified class
 	 */
-	public abstract String getModifiedClassPath(String extension);
+	public abstract String getModifiedPath(String extension);
 
 	/**
 	 * Sets the fixed file for the current project.

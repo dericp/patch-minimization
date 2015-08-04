@@ -1,11 +1,12 @@
 package edu.washington.bugisolation;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
-import edu.washington.bugisolation.util.Operations;
 
 /**
  * The ProjectInfo class stores all the information about the current project.
@@ -42,27 +43,19 @@ public class Defects4JPI implements ProjectInfo {
 		buggyFile = new LinkedList<String>();
 	}
 	
-	/**
-	 * Sets the directory containing the source code of the project.
-	 * 
-	 * @return	an int, denoting the exit value of the process
-	 */
-	private String getDirectory(String property) {
-		String propFile = WORKSPACE + getFullProjectName() +  "_Directory_Layout";
-		Operations.commandLine (
-				"perl " + WORKSPACE + "defects4j/framework/util/get_directories.pl"
-				+ " -p " + projectName + " -v " + projectVersion
-				, WORKSPACE + "defects4j/framework/util/"
-				, propFile);
-		
-		try {
-			Properties props = new Properties();
-			props.load(new FileInputStream(propFile));
-			return props.getProperty(property) + '/';
-		} catch (Exception e) {
-			System.out.println(e.toString());
-			return null;
-		}
+	/* can only be executed after checkout has been called */
+	private String getD4JProperty(String property) {
+	    Properties props = new Properties();
+	    try {
+            props.load(new FileInputStream(getFixedDirectory() + "defects4j.build.properties"));
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    return props.getProperty(property);
 	}
 	
 	/* (non-Javadoc)
@@ -142,14 +135,14 @@ public class Defects4JPI implements ProjectInfo {
 	 */
 	@Override
 	public String getDiffPathA() {
-		return "a/" + getSrcDirectory() + getModifiedClassPath(".java");
+		return "a/" + getSrcDirectory() + getModifiedPath(".java");
 	}
 	
 	/* (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getDiffPathB()
 	 */
 	public String getDiffPathB() {
-		return "b/" + getSrcDirectory() + getModifiedClassPath(".java");
+		return "b/" + getSrcDirectory() + getModifiedPath(".java");
 	}
 	
 	/* (non-Javadoc)
@@ -157,8 +150,8 @@ public class Defects4JPI implements ProjectInfo {
 	 */
 	@Override
 	public List<String> getTriggerTests() {
-		return Operations.getTests(ProjectInfo.D4J_LOCATION + "framework/projects/"
-					+ getProjectName() + "/trigger_tests/" + getProjectVersion());
+	    String triggerTests = getD4JProperty("d4j.tests.trigger");
+	    return Arrays.asList(triggerTests.split(","));
 	}
 	
 	/*
@@ -167,7 +160,7 @@ public class Defects4JPI implements ProjectInfo {
 	 */
 	@Override
 	public String getSrcDirectory() {
-		return getDirectory("src");
+	    return getD4JProperty("d4j.dir.src.classes") + '/';
 	}
 	
 	/*
@@ -176,7 +169,7 @@ public class Defects4JPI implements ProjectInfo {
 	 */
 	@Override
 	public String getTestDirectory() {
-		return getDirectory("test");
+	    return getD4JProperty("d4j.dir.src.tests") + '/';
 	}
 	
 	/* (non-Javadoc)
@@ -224,17 +217,15 @@ public class Defects4JPI implements ProjectInfo {
 	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedClass()
 	 */
 	@Override
-	public String getModifiedClass() {
-	    return Operations.fileToLines (
-	            D4J_LOCATION + "framework/projects/" + projectName + "/modified_classes/"
-	            + projectVersion + ".src").get(0);
+	public String getModifiedFullyQualifiedName() {
+	    return getD4JProperty("d4j.classes.modified");
 	}
 	
 	/* (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedClass()
 	 */
 	@Override
-	public String getModifiedClassPath(String extension) {
-		return getModifiedClass().replace('.', '/') + extension;
+	public String getModifiedPath(String extension) {
+		return getModifiedFullyQualifiedName().replace('.', '/') + extension;
 	}	
 }
