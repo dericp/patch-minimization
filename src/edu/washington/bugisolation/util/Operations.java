@@ -177,8 +177,8 @@ public class Operations {
         while(iter.hasNext()) {
         	String line = iter.next();
         	if (line.startsWith("---")) {
-        		result.add(line);
-        		result.add(iter.next());
+        		result.add(line.substring(4));
+        		//result.add(iter.next());
         	}
         }
         return result;

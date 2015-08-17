@@ -396,7 +396,7 @@ public class DeltaDebugging {
 	    	
 	    	if (!delta.getOriginal().getLines().isEmpty()) {
 	    	    System.out.println("YAYYYYY minimizing original chunk");
-		    	minOriginalChunkLines = ddmin (
+	    	    minOriginalChunkLines = ddmin (
 	                    new ChunkInput (
 	                            delta.getOriginal().getLines()
 	                            , true
