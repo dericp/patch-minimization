@@ -154,7 +154,9 @@ public class Operations {
 		try {
 			PrintStream output = new PrintStream(file);
 			for (String line : fileLines) {
-				output.println(line);
+			    if (line != null) {
+			        output.println(line);
+			    }
 			}
 			output.close();
 		} catch (FileNotFoundException e) {
