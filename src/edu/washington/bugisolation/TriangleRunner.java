@@ -42,15 +42,15 @@ public class TriangleRunner {
 	    DeltaDebugging dd = new DeltaDebugging(proj, tri);
 	    
 	    /* get the minimized deltas with ddminDelta; */
-	    List<Delta<String>> minDeltas = dd.ddmin(new DeltaInput(patch.getDeltas()), Granularity.QUADRATIC);
+	    //List<Delta<String>> minDeltas = dd.ddmin(new HunksInput(patch.getDeltas()), Granularity.EXPONENTIAL);
 	    
 	    /* minimize each individual delta */
-	    List<Delta<String>> minChunkDeltas = dd.minimizeChunks(minDeltas, Granularity.LINEAR); 
+	  //  List<Delta<String>> minChunkDeltas = dd.minimizeChunks(minDeltas, Granularity.LINEAR); 
 	    
 	    /* create the minimized diff */
 	    Patch<String> minimizedPatch = new Patch<String>();
 	 
-	    for (Delta<String> delta : minChunkDeltas) {
+	    /*for (Delta<String> delta : minChunkDeltas) {
 	    	minimizedPatch.addDelta(delta);
 	    }
 	    
@@ -70,12 +70,12 @@ public class TriangleRunner {
 	    			, proj.getBuggyFile()
 	    			, minimizedPatch
 	    			, 3);
-	    }
+	    } 
 	    
     	Operations.linesToFile (
     			diffLines, ProjectInfo.WORKSPACE + proj.getProjectName()
     			+ '_' + proj.getProjectVersion() + '_' + "min.diff");
-	}
+	} */
 
 	/* private static List<Line> convertToLines(List<String> list) {
 		List<Line> result = new ArrayList<Line>(list.size());
@@ -83,6 +83,6 @@ public class TriangleRunner {
 			Line line = new Line(list.get(i), i);
 			result.add(line);
 		}
-		return result;
-	} */
+		return result; */
+	} 
 }

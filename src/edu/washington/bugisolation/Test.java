@@ -10,6 +10,11 @@ import edu.washington.bugisolation.util.Hunk;
 
 public class Test {
     
+    public static void main(String[] args) {
+        DiffUtils diffUtils = new DiffUtils(new Diff(ProjectInfo.WORKSPACE + "Lang_30.diff"));
+        diffUtils.exportUnifiedDiff(ProjectInfo.WORKSPACE + "TEST.diff");
+    }
+    
     /* public static void main(String[] args) {
         List<String> list = new ArrayList<String>();
         list.add("@@ -1372,22 +1372,11 @@");
@@ -69,12 +74,12 @@ public class Test {
         diff.exportDiff(ProjectInfo.WORKSPACE + "TEST1.diff");
     } */
     
-    public static void main(String[] args) {
+    /* public static void main(String[] args) {
         Diff diff = new Diff(ProjectInfo.WORKSPACE + "Lang_30.diff");
         DiffUtils diffUtils = new DiffUtils(diff);
         
         diffUtils.removeHunk(0);
         
         diffUtils.exportUnifiedDiff(ProjectInfo.WORKSPACE + "TEST.diff");
-    }
+    } */
 }

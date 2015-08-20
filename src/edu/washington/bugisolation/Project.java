@@ -41,7 +41,9 @@ public interface Project {
 	 * 				of the current project
 	 */
 	public abstract Patch<String> generatePatch();
-
+	
+	public abstract void generateDiff();
+	
 	/**
 	 * Applies the generated patch to either the buggy or fixed version, depending on relevance.
 	 * 

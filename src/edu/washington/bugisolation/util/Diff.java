@@ -12,20 +12,32 @@ public class Diff {
     private String filePathB;
     private List<Hunk> hunks;
     
-    public Diff(String filePathA, String filePathB, List<Hunk> hunks) {
-        this.filePathA = filePathA;
-        this.filePathB = filePathB;
-        this.hunks = hunks;
+    public Diff(Diff otherDiff) {
+        filePathA = otherDiff.filePathA;
+        filePathB = otherDiff.filePathB;
+        hunks = new ArrayList<Hunk>(otherDiff.hunks);
+    }
+    public Diff(List<String> diffLines) {
+        this(diffLines, null, null);
     }
     
-    public Diff(List<String> diffLines) {
-        setFilePaths(diffLines);
+    public Diff(List<String> diffLines, String filePathA, String filePathB) {
         hunks = new ArrayList<Hunk>();
         readHunks(diffLines);
+        if (filePathA == null || filePathB == null) {
+            setFilePaths(diffLines);
+        } else {
+            this.filePathA = "--- a/" + filePathA;
+            this.filePathB = "+++ b/" + filePathB;
+        }
     }
     
     public Diff(String diffFilePath) {
         this(Operations.fileToLines(diffFilePath));
+    }
+    
+    public Diff(String diffFilePath, String filePathA, String filePathB) {
+        this(Operations.fileToLines(diffFilePath), filePathA, filePathB);
     }
     
     private void setFilePaths(List<String> diffLines) {
@@ -75,7 +87,9 @@ public class Diff {
         export.add(filePathA);
         export.add(filePathB);
         for (Hunk hunk : hunks) {
-            export.addAll(hunk.getHunkLines());
+            if (hunk != null) {
+                export.addAll(hunk.getHunkLines());
+            }
         }
         Operations.linesToFile(export, filepath);
     }

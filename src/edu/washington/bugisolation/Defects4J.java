@@ -56,6 +56,7 @@ public class Defects4J implements Project {
 	 * @return				an int, denoting the exti value of the process
 	 */
 	private int gitOperation(String command, String directory) {
+	    System.out.println(command);
 		return Operations.commandLine("git " + command, directory);
 	}
 	
@@ -185,6 +186,33 @@ public class Defects4J implements Project {
 		} else {
 			return DiffUtils.diff(buggyFile, fixedFile);
 		}
+	}
+	
+	public void generateDiff() {
+	    System.out.println("Generating initial patch");
+	    if (projectInfo.isFixedToBuggy()) {
+	           Operations.commandLine (
+	                    "git diff " + projectInfo.getFixedDirectory()
+	                    + projectInfo.getSrcDirectory()
+	                    + projectInfo.getModifiedPath(".java")
+	                    + " "
+	                    + projectInfo.getBuggyDirectory()
+	                    + projectInfo.getSrcDirectory()
+	                    + projectInfo.getModifiedPath(".java")
+	                    , ProjectInfo.WORKSPACE
+	                    , ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
+	    } else {
+    	    Operations.commandLine (
+    	            "git diff " + projectInfo.getBuggyDirectory()
+    	            + projectInfo.getSrcDirectory()
+    	            + projectInfo.getModifiedPath(".java")
+    	            + " "
+    	            + projectInfo.getFixedDirectory()
+    	            + projectInfo.getSrcDirectory()
+    	            + projectInfo.getModifiedPath(".java")
+    	            , ProjectInfo.WORKSPACE
+    	            , ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
+	    }
 	}
 	
 	/* (non-Javadoc)

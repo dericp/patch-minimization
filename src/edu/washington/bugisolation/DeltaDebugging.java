@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import difflib.*;
 import edu.washington.bugisolation.DDInput.Type;
+import edu.washington.bugisolation.util.DiffUtils;
 import edu.washington.bugisolation.util.Operations;
 
 /**
@@ -27,7 +27,7 @@ public class DeltaDebugging {
 	private Project project;
 
 	public enum Granularity {
-	    LINEAR, QUADRATIC
+	    LINEAR, EXPONENTIAL
 	}
 	
 	/**
@@ -78,17 +78,12 @@ public class DeltaDebugging {
      * @return                  an int, denoting whether or not the configuration passed the test	
      */
     @SuppressWarnings("unchecked")
-    private <T> int test(DDInput<T> input) {
-    	if (input.getKind() == Type.DELTA) {
-    	    return testDeltas((List<Delta<String>>) input.getCircumstances());
+    private int test(DDInput input) {
+    	if (input.getKind() == Type.HUNKS) {
+    	    return testHunk(input);
     	}
-    	if (input.getKind() == Type.CHUNK) {
-    	    return testChunk (
-    	            ((ChunkInput) input).getCircumstances()
-    	            , ((ChunkInput) input).isOriginalChunk()
-    	            , ((ChunkInput) input).getOtherDeltas()
-    	            , ((ChunkInput) input).getOtherChunk()
-    	            , (((ChunkInput) input).getChunkStart()));
+    	if (input.getKind() == Type.LINES) {
+    	    //return testLines(input);
     	}
     	return UNRESOLVED;
     }
@@ -96,54 +91,24 @@ public class DeltaDebugging {
     
     /**
      * Returns whether or not a certain configuration of Deltas pass a test.
+     * @param <T>
      * 
      * @param config	a List of Deltas, contains the deltas of a given patch
      * @return			an int, denoting whether or not the configuration passed the test
      */
-    private int testDeltas(List<Delta<String>> config) {
-    	System.out.println("Testing " + config.size() + " deltas");
-	   
+    private int testHunk(DDInput input) {
+    	System.out.println("Testing " + input.getCircumstances().size() + " hunks");
+    	
     	boolean result = false;
     	
-    	if (!config.isEmpty()) {
+    	if (!input.getCircumstances().isEmpty()) {
     		
-	    	/* generate patch from deltas */
-	    	Patch<String> patch = new Patch<String>();
-	    	for (Delta<String> delta : config) {
-	    		patch.addDelta(delta);
-	    	}
-	    	
-	    	/* generate unified diff */
-	    	List<String> diffLines;
-	    	/* if (projectInfo.isFixedToBuggy()) {
-	    		diffLines = DiffUtils.generateUnifiedDiff (
-	    				projectInfo.getDiffPathA()
-	    				, projectInfo.getDiffPathB()
-	    				, projectInfo.getFixedFile()
-	    				, patch
-	    				, 3);
-	    	} else {
-	    		diffLines = DiffUtils.generateUnifiedDiff (
-	    				projectInfo.getDiffPathA()
-	    				, projectInfo.getDiffPathB()
-	    				, projectInfo.getBuggyFile()
-	    				, patch
-	    				, 3);
-	    	} */
-	    	
-            diffLines = DiffUtils.generateUnifiedDiff (
-                    projectInfo.getDiffPathA()
-                    , projectInfo.getDiffPathB()
-                    , projectInfo.getModifiedFile()
-                    , patch
-                    , 3);
-	    	
-	    	/* save the unified diff */
-	    	Operations.linesToFile (
-	    			diffLines
-	    			, ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
-	    	
-	    	/* apply the patch */
+	    	// remove the irrelevant hunks
+    	    input.removeElements();
+    	    
+    	    // generate the patch
+    	    input.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
+    	    
 	    	result = project.applyPatch() != 0;
     	}
     	
@@ -177,19 +142,19 @@ public class DeltaDebugging {
 		return Operations.boolToInt(result);
     }
     
-    /**
+/*    *//**
      * Returns whether or not a certain configuration of Strings pass a test.
      * 
      * @param config	a List of Strings, contains the lines of a given chunk
      * @return			an int, denoting whether or not the configuration passed the test
-     */
-    public int testChunk(List<String> chunkLines, boolean originalChunk, List<Delta<String>> otherDeltas, Chunk<String> otherChunk, int chunkStart) {
+     *//*
+    public int testLines(DDInput input) {
     	System.out.println("Testing chunk of size " + chunkLines.size());
     	
     	boolean result = false;
     	if (!chunkLines.isEmpty()) {
     		
-    		/* create the new delta */
+    		 create the new delta 
     		Delta<String> minDelta;
     		if (originalChunk) {
     			minDelta = new ChangeDelta<String>(new Chunk<String>(chunkStart, chunkLines), otherChunk);
@@ -197,7 +162,7 @@ public class DeltaDebugging {
     			minDelta = new ChangeDelta<String>(otherChunk, new Chunk<String>(chunkStart, chunkLines));
     		}
     		
-	    	/* need the minimized list of deltas */
+	    	 need the minimized list of deltas 
 	    	Patch<String> patch = new Patch<String>();
 	    	
 	    	for (Delta<String> delta : otherDeltas) {
@@ -206,9 +171,9 @@ public class DeltaDebugging {
 	    	
 	    	patch.addDelta(minDelta);
 	    	
-	    	/* generate unified diff */
+	    	 generate unified diff 
 	    	List<String> diffLines;
-	    	/* if (projectInfo.isFixedToBuggy()) {
+	    	 if (projectInfo.isFixedToBuggy()) {
 	    		diffLines = DiffUtils.generateUnifiedDiff (
 	    				projectInfo.getDiffPathA()
 	    				, projectInfo.getDiffPathB()
@@ -222,7 +187,7 @@ public class DeltaDebugging {
 	    				, projectInfo.getBuggyFile()
 	    				, patch
 	    				, 3);
-	    	} */
+	    	} 
             diffLines = DiffUtils.generateUnifiedDiff (
                     projectInfo.getDiffPathA()
                     , projectInfo.getDiffPathB()
@@ -230,30 +195,30 @@ public class DeltaDebugging {
                     , patch
                     , 3);
             
-	    	/* save the unified diff */
+	    	 save the unified diff 
 	    	Operations.linesToFile (
 	    			diffLines
 	    			, ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
 	    	
-	    	/* apply the patch */
+	    	 apply the patch 
 	    	result = project.applyPatch() != 0;
     	}
     	
-    	/* if the patch is applicable */
+    	 if the patch is applicable 
     	if (!result) {
     		
-    		/* test if the project compiles */
+    		 test if the project compiles 
     		result = project.compileModified() != 0;
     		
-    		/* if the project compiles */
+    		 if the project compiles 
 	    	if (!result) {
 	    		
-	    		/* run the necessary tests */
+	    		 run the necessary tests 
 	    		project.test();
 	    		List<String> failingTests = project.getFailingTests();
 	    		
-	    		/* there are two different passing conditions depending on which
-	    		 * direction the delta debugging algorithm proceeds */
+	    		 there are two different passing conditions depending on which
+	    		 * direction the delta debugging algorithm proceeds 
 	    		if (projectInfo.isFixedToBuggy()) {
 		    		result = !projectInfo.getTriggerTests().equals(failingTests);
 	    		} else {
@@ -262,12 +227,12 @@ public class DeltaDebugging {
 	    	}
     	}
     	
-    	/* reset the project back to its checkout state */
+    	 reset the project back to its checkout state 
     	project.reset();
     	System.out.println("Configuration returned " + result);
     	System.out.println();
 		return Operations.boolToInt(result);
-    }
+    }*/
     
     /**
      * Minimizes a list of failing input.
@@ -277,26 +242,20 @@ public class DeltaDebugging {
      * @return          a List of minimal circumstances that pass test
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> ddmin(DDInput<T> input, Granularity gran) {
+    public List<Integer> ddmin(DDInput input, Granularity gran) {
         
         System.out.println("***** Running ddmin *****");
         System.out.println(input.getCircumstances().size() + " initial elements");
-
-        List<T> circumstances = input.getCircumstances();
+        
+        List<Integer> circumstances = input.getCircumstances();
        
-        if (input.getKind() == Type.DELTA) {
-            assert test(new DeltaInput(new ArrayList<Delta<String>>())) == PASS;
+        if (input.getKind() == Type.HUNKS) {
+            assert test(new HunksInput(input.getDiffUtils(), new ArrayList<Integer>())) == PASS;
         }
-        if (input.getKind() == Type.CHUNK) {
-            assert test (
-                    new ChunkInput (
-                            new ArrayList<String>()
-                            , ((ChunkInput) input).isOriginalChunk()
-                            , ((ChunkInput) input).getOtherDeltas()
-                            , ((ChunkInput) input).getOtherChunk()
-                            , ((ChunkInput) input).getChunkStart())) == PASS;
-                    
+        if (input.getKind() == Type.LINES) {
+            assert test(new LinesInput(input.getDiffUtils(), new ArrayList<Integer>())) == PASS;        
         }
+        
         assert test(input) == FAIL;
         
         int n = 2;
@@ -305,7 +264,7 @@ public class DeltaDebugging {
         
         while (circumstances.size() >= 2) {
             
-            List<List<T>> subsets = split(circumstances, n);
+            List<List<Integer>> subsets = split(circumstances, n);
             assert subsets.size() == n;
 
             System.out.println("ddmin: testing subsets");
@@ -327,18 +286,13 @@ public class DeltaDebugging {
                     indices.put(stop1, stop2);
                 }
                 
-                DDInput<T> complement = null;
+                DDInput complement = null;
                 
-                if (input.getKind() == Type.DELTA) {
-                    complement = (DDInput<T>) new DeltaInput((List<Delta<String>>) minusIndices(circumstances, stop1, stop2));
+                if (input.getKind() == Type.HUNKS) {
+                    complement = new HunksInput(input.getDiffUtils(), minusIndices(circumstances, stop1, stop2));
                 }
-                if (input.getKind() == Type.CHUNK) {
-                    complement = (DDInput<T>) new ChunkInput (
-                            (List<String>) minusIndices(circumstances, stop1, stop2)
-                            , ((ChunkInput) input).isOriginalChunk()
-                            , ((ChunkInput) input).getOtherDeltas()
-                            , ((ChunkInput) input).getOtherChunk()
-                            , ((ChunkInput) input).getChunkStart());
+                if (input.getKind() == Type.LINES) {
+                    //complement = new LinesInput(;)
                 }
 
                 if (test(complement) == FAIL) {
@@ -361,7 +315,7 @@ public class DeltaDebugging {
                 if (gran == Granularity.LINEAR) {
                     newGran = ++n;
                 }
-                if (gran == Granularity.QUADRATIC) {
+                if (gran == Granularity.EXPONENTIAL) {
                     newGran = n * 2;
                 }
                 n = Math.min(newGran, circumstances.size());
@@ -372,60 +326,15 @@ public class DeltaDebugging {
         return circumstances;
     }
     
-    /**
-     * Minimizes each individual delta that is passed in.
-     * 
-     * @param minDeltas		a List of Deltas, each will be have its chunks analyzed
-     * 						and minimized
-     * @return				a List of Deltas, each Delta containing the minimal
-     * 						chunk lines to fail testChunk
-     */
-    public List<Delta<String>> minimizeChunks(List<Delta<String>> minDeltas, Granularity gran) {
-	    List<Delta<String>> minChunkDeltas = new ArrayList<Delta<String>>();
-	    
-	    for (Delta<String> delta : minDeltas) {
-	    	
-	    	/* create a new list of the other deltas */
-	    	List<Delta<String>> otherDeltas = new LinkedList<Delta<String>>(minDeltas);
-	    	otherDeltas.remove(delta);
-	    	
-	    	Delta<String> minChunkDelta;
-	    	
-	    	List<String> minOriginalChunkLines = new ArrayList<String>();
-	    	List<String> minRevisedChunkLines = new ArrayList<String>();
-	    	
-	    	if (!delta.getOriginal().getLines().isEmpty()) {
-	    	    System.out.println("YAYYYYY minimizing original chunk");
-	    	    minOriginalChunkLines = ddmin (
-	                    new ChunkInput (
-	                            delta.getOriginal().getLines()
-	                            , true
-	                            , otherDeltas
-	                            , delta.getRevised()
-	                            , delta.getOriginal().getPosition())
-	                            , gran);
-	    	}
-	    	if (!delta.getRevised().getLines().isEmpty()) {
-	            System.out.println("YAYYYYY minimizing revised chunk");
-                minRevisedChunkLines = ddmin (
-                        new ChunkInput (
-                                delta.getRevised().getLines()
-                                , false
-                                , otherDeltas
-                                , delta.getOriginal()
-                                , delta.getRevised().getPosition())
-                                , gran);
-	    	}
-	    	minChunkDelta = 
-	    			new ChangeDelta<String> (
-	    					new Chunk<String> (
-	    							delta.getOriginal().getPosition(), minOriginalChunkLines)
-	    					, new Chunk<String> (
-	    							delta.getRevised().getPosition(), minRevisedChunkLines));
-	    	
-	    	minChunkDeltas.add(minChunkDelta);
-	    }
-	    return minChunkDeltas;
+    public void minimizeHunks(DiffUtils diffUtils) {
+        List<Integer> hunks = new ArrayList<Integer>();
+        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); ++i) {
+            hunks.add(i);
+        }
+        DDInput hunksInput = new HunksInput(diffUtils, hunks);
+        
+        DDInput minimizedPatch = new HunksInput(diffUtils, ddmin(hunksInput, Granularity.EXPONENTIAL));
+        minimizedPatch.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_min.diff");
     }
 }
 

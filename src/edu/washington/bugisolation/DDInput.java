@@ -1,14 +1,23 @@
 package edu.washington.bugisolation;
 
 import java.util.List;
+import java.util.Set;
 
-public interface DDInput<T> {
+import edu.washington.bugisolation.util.DiffUtils;
+
+public interface DDInput {
 
        public enum Type {
-           DELTA, CHUNK
+           HUNKS, LINES
        }
        
        public Type getKind();
        
-       public List<T> getCircumstances();
+       public DiffUtils getDiffUtils();
+       
+       public List<Integer> getCircumstances();
+       
+       public Set<Integer> getRemovedElements();
+       
+       public void removeElements();
 }

@@ -10,6 +10,10 @@ import edu.washington.bugisolation.util.Operations;
 
 public class Triangle implements Project {
 	
+    public void generateDiff() {
+        
+    }
+    
 	private final String ANT = "/opt/local/share/java/apache-ant/bin/ant ";
 	
 	/* a projectInfo that stores all the information of the project */

@@ -8,14 +8,18 @@ public class DiffUtils {
         this.diff = diff;
     }
     
+    public Diff getDiff() {
+        return diff;
+    }
+    
     // zero based indexing
     public void removeHunk(int hunkNumber) {
         Hunk hunk = diff.getHunks().get(hunkNumber);
         int offset = hunk.getOriginalHunkSize() - hunk.getRevisedHunkSize();
         for (int i = hunkNumber + 1; i < diff.getHunks().size(); ++i) {
-            diff.getHunks().get(i).modifyRevisedLineNumber(offset);
+           diff.getHunks().get(i).modifyRevisedLineNumber(offset);
         }
-        diff.getHunks().remove(hunkNumber);
+        diff.getHunks().set(hunkNumber, null);
     }
     
     // zero based indexing

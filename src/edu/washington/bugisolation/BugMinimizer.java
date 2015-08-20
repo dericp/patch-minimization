@@ -3,10 +3,12 @@ package edu.washington.bugisolation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
-import difflib.*;
 import edu.washington.bugisolation.DeltaDebugging.Granularity;
+import edu.washington.bugisolation.util.Diff;
+import edu.washington.bugisolation.util.DiffUtils;
 import edu.washington.bugisolation.util.Operations;
 
 /**
@@ -51,37 +53,16 @@ public class BugMinimizer {
 		d4j.checkout();
 		
 		/* create a patch between fixed and buggy versions of the project or vice versa */
-		Patch<String> patch = d4j.generatePatch();
+		d4j.generateDiff();
 
 		/* minimize patch with delta debugging */
 		DeltaDebugging dd = new DeltaDebugging(d4jPI, d4j);
+		
+		DiffUtils diffUtils = new DiffUtils(new Diff (
+		        ProjectInfo.WORKSPACE + d4jPI.getFullProjectName() + ".diff"
+		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")
+		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")));
 	    
-		/* get the minimized deltas with ddminDelta */
-		DDInput<Delta<String>> input = new DeltaInput(patch.getDeltas());
-		List<Delta<String>> minDeltas = dd.ddmin(input, Granularity.QUADRATIC);
-	   
-		/* minimize each individual delta's chunks */ 
-		List<Delta<String>> minChunkDeltas = dd.minimizeChunks(minDeltas, Granularity.LINEAR);
-		
-		/* minimize the new list of deltas */
-		List<Delta<String>> minChunksMinDeltas = dd.ddmin(new DeltaInput(minChunkDeltas), Granularity.QUADRATIC);
-
-		/* create the minimized diff */
-		Patch<String> minimizedPatch = new Patch<String>();
-		for (Delta<String> delta : minChunksMinDeltas) {
-			minimizedPatch.addDelta(delta);
-		}
-	
-		List<String> diffLines;
-		
-		diffLines = DiffUtils.generateUnifiedDiff (
-		        d4jPI.getDiffPathA()
-		        , d4jPI.getDiffPathB()
-		        , d4jPI.getModifiedFile()
-		        , minimizedPatch
-		        , 3);
-		Operations.linesToFile (
-		        diffLines, ProjectInfo.WORKSPACE + "min_diffs/" + d4jPI.getFullProjectName()
-		        +  '_' + d4jPI.isFixedToBuggy() + "_min.diff");
+		dd.minimizeHunks(diffUtils);
 	}
 }
