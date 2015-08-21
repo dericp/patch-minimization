@@ -3,13 +3,9 @@ package edu.washington.bugisolation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
-import edu.washington.bugisolation.DeltaDebugging.Granularity;
 import edu.washington.bugisolation.util.Diff;
 import edu.washington.bugisolation.util.DiffUtils;
-import edu.washington.bugisolation.util.Operations;
 
 /**
  * Minimizes and isolates the bug between two versions of a program in the Defects4J database.
@@ -63,6 +59,7 @@ public class BugMinimizer {
 		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")
 		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")));
 	    
-		dd.minimizeHunks(diffUtils);
+		diffUtils = dd.minimizeHunks(diffUtils);
+		diffUtils = dd.minimizeLines(diffUtils);
 	}
 }

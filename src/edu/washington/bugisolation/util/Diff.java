@@ -15,7 +15,11 @@ public class Diff {
     public Diff(Diff otherDiff) {
         filePathA = otherDiff.filePathA;
         filePathB = otherDiff.filePathB;
-        hunks = new ArrayList<Hunk>(otherDiff.hunks);
+        hunks = new ArrayList<Hunk>();
+        for (Hunk hunk : otherDiff.getHunks()) {
+            Hunk temp = new Hunk(hunk.getHunkLines());
+            hunks.add(temp);
+        }
     }
     public Diff(List<String> diffLines) {
         this(diffLines, null, null);

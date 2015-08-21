@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import difflib.*;
 import edu.washington.bugisolation.util.Operations;
 
 /**
@@ -163,29 +162,6 @@ public class Defects4J implements Project {
 		System.out.println("Getting failing tests");
 		
 		return Operations.getTests(projectInfo.getModifiedDirectory() + ".failing_tests");
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.washington.bugisolation.Project#getPatch()
-	 */
-	@Override
-	public Patch<String> generatePatch() {
-		System.out.println("Generating patch between the versions of the project");
-		
-		List<String> fixedFile = Operations.fileToLines (
-				projectInfo.getFixedDirectory()
-				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedPath(".java"));
-		List<String> buggyFile = Operations.fileToLines (
-				projectInfo.getBuggyDirectory()
-				+ projectInfo.getSrcDirectory() + projectInfo.getModifiedPath(".java"));
-		projectInfo.setFixedFile(fixedFile);
-		projectInfo.setBuggyFile(buggyFile);
-		
-		if (projectInfo.isFixedToBuggy()) {
-			return DiffUtils.diff(fixedFile, buggyFile);
-		} else {
-			return DiffUtils.diff(buggyFile, fixedFile);
-		}
 	}
 	
 	public void generateDiff() {

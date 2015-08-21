@@ -12,9 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import difflib.Delta;
-import difflib.Patch;
-
 /**
  * The Operations class performs all the utility functions of the bug minimization process. 
  * 
@@ -61,17 +58,6 @@ public class Operations {
 		return commandLine(command, directory, null);
 	}
 	
-	/**
-	 * Combines the Deltas of two Patch objects.
-	 * 
-	 * @param original		a Patch, the original one which the other Patch will be merged with
-	 * @param other			a Patch, the one that will be merged into the original
-	 */
-    public static <T> void mergePatches(Patch<T> original, Patch<T> other) {
-    	for (Delta<T> delta : other.getDeltas()) {
-    		original.addDelta(delta);
-    	}
-    }
 	
     /**
      * Starts a process.

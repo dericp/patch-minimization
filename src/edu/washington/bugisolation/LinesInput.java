@@ -1,5 +1,6 @@
 package edu.washington.bugisolation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,13 +13,36 @@ public class LinesInput implements DDInput {
     private DiffUtils diffUtils;
     private List<Integer> circumstances;
     private Set<Integer> removedElements;
+    private int hunkNumber;
     
-    public LinesInput(DiffUtils diffUtils, List<Integer> circumstances) {
+    public LinesInput(DiffUtils diffUtils) {
+        this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
+        circumstances = new ArrayList<Integer>();
+        removedElements = new HashSet<Integer>();
+        hunkNumber = 0;
+    }
+    
+    public LinesInput(DiffUtils diffUtils, List<Integer> circumstances, int hunkNumber) {
         this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
         this.circumstances = circumstances;
         removedElements = new HashSet<Integer>();
-        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); ++i) {
-            circumstances.add(i);
+        setRemovedElements();
+    }
+    
+    public int getHunkNumber() {
+        return hunkNumber;
+    }
+    
+    public void setCircumstances(List<Integer> circumstances, int hunkNumber) {
+        this.circumstances = circumstances;
+        this.hunkNumber = hunkNumber;
+        setRemovedElements();
+    }
+    
+    private void setRemovedElements() {
+        removedElements = new HashSet<Integer>();
+        for (int i = 0; i < diffUtils.getDiff().getHunks().get(hunkNumber).getModifiedLines().size(); ++i) {
+            removedElements.add(i);
         }
         removedElements.removeAll(circumstances);
     }
@@ -38,12 +62,9 @@ public class LinesInput implements DDInput {
     }
 
     @Override
-    public Set<Integer> getRemovedElements() {
-        return removedElements;
-    }
-
-    @Override
     public void removeElements() {
-
+        for (int index : removedElements) {
+            diffUtils.removeChangeFromHunk(hunkNumber, index);
+        }
     }
 }

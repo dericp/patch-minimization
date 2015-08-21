@@ -19,10 +19,11 @@ public class HunksInput implements DDInput {
         this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
         this.circumstances = circumstances;
         removedElements = new HashSet<Integer>();
-        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); ++i) {
-            removedElements.add(i);
-        }
-        removedElements.removeAll(circumstances);
+    }
+    
+    public int getHunkNumber() {
+        //TODO: should eventually return the diff number or something
+        return -1;
     }
     
     @Override
@@ -39,8 +40,16 @@ public class HunksInput implements DDInput {
         return circumstances;
     }
     
-    public Set<Integer> getRemovedElements() {
-        return removedElements;
+    public void setCircumstances(List<Integer> circumstances, int hunkNumber) {
+        this.circumstances = circumstances;
+        setRemovedElements();
+    }
+    
+    private void setRemovedElements() {
+        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); ++i) {
+            removedElements.add(i);
+        }
+        removedElements.removeAll(circumstances);
     }
     
     public void removeElements() {

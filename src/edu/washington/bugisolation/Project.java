@@ -2,8 +2,6 @@ package edu.washington.bugisolation;
 
 import java.util.List;
 
-import difflib.Patch;
-
 public interface Project {
 
     /**
@@ -32,15 +30,6 @@ public interface Project {
 	 * 				the current project
 	 */
 	public abstract List<String> getFailingTests();
-
-	/**
-	 * Generates the patch between the buggy and fixed versions or vice versa of the
-	 * of the current project.
-	 * 
-	 * @return		a Patch between the buggy and fixed versions or vice versa
-	 * 				of the current project
-	 */
-	public abstract Patch<String> generatePatch();
 	
 	public abstract void generateDiff();
 	
