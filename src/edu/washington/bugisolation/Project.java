@@ -31,7 +31,7 @@ public interface Project {
 	 */
 	public abstract List<String> getFailingTests();
 	
-	public abstract void generateDiff();
+	public abstract void generatePatch();
 	
 	/**
 	 * Applies the generated patch to either the buggy or fixed version, depending on relevance.

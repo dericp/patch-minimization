@@ -19,6 +19,7 @@ public class HunksInput implements DDInput {
         this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
         this.circumstances = circumstances;
         removedElements = new HashSet<Integer>();
+        setRemovedElements();
     }
     
     public int getHunkNumber() {

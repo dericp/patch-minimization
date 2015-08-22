@@ -49,7 +49,7 @@ public class BugMinimizer {
 		d4j.checkout();
 		
 		/* create a patch between fixed and buggy versions of the project or vice versa */
-		d4j.generateDiff();
+		d4j.generatePatch();
 
 		/* minimize patch with delta debugging */
 		DeltaDebugging dd = new DeltaDebugging(d4jPI, d4j);
@@ -59,6 +59,7 @@ public class BugMinimizer {
 		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")
 		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")));
 	    
+		diffUtils.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + d4jPI.getFullProjectName() + "_" + d4jPI.isFixedToBuggy() + ".diff");
 		diffUtils = dd.minimizeHunks(diffUtils);
 		diffUtils = dd.minimizeLines(diffUtils);
 	}

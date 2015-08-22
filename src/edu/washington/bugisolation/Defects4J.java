@@ -164,7 +164,7 @@ public class Defects4J implements Project {
 		return Operations.getTests(projectInfo.getModifiedDirectory() + ".failing_tests");
 	}
 	
-	public void generateDiff() {
+	public void generatePatch() {
 	    System.out.println("Generating initial patch");
 	    if (projectInfo.isFixedToBuggy()) {
 	           Operations.commandLine (

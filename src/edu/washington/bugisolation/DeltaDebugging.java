@@ -8,6 +8,7 @@ import java.util.Map;
 
 import edu.washington.bugisolation.DDInput.Type;
 import edu.washington.bugisolation.util.DiffUtils;
+import edu.washington.bugisolation.util.Hunk;
 import edu.washington.bugisolation.util.Operations;
 
 /**
@@ -97,7 +98,7 @@ public class DeltaDebugging {
      * @return			an int, denoting whether or not the configuration passed the test
      */
     private int test(DDInput input) {
-    	System.out.println("Testing " + input.getCircumstances().size() + " hunks");
+    	System.out.println("Testing " + input.getCircumstances().size() + " elements");
     	
     	boolean result = false;
     	
@@ -244,6 +245,7 @@ public class DeltaDebugging {
     public List<Integer> ddmin(DDInput input, Granularity gran) {
         
         System.out.println("***** Running ddmin *****");
+        System.out.println("minimizing " + input.getKind());
         System.out.println(input.getCircumstances().size() + " initial elements");
         
         List<Integer> circumstances = input.getCircumstances();
@@ -339,17 +341,23 @@ public class DeltaDebugging {
     }
     
     public DiffUtils minimizeLines(DiffUtils diffUtils) {
+        System.out.println("minimizing Lines");
         DDInput minimizedPatch = new LinesInput(diffUtils);
+        List<Hunk> hunks = diffUtils.getDiff().getHunks();
+        
         // i denotes the hunk number
-        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); i++) {
-            List<Integer> lines = new ArrayList<Integer>();
-            for (int j = 0; j < diffUtils.getDiff().getHunks().get(i).getModifiedLines().size(); j++) {
-                lines.add(j);
+        for (int i = 0; i < hunks.size(); i++) {
+            System.out.println("miniming hunk number " + i);
+            if (hunks.get(i) != null) {
+                List<Integer> lines = new ArrayList<Integer>();
+                for (int j = 0; j < diffUtils.getDiff().getHunks().get(i).getModifiedLines().size(); j++) {
+                    lines.add(j);
+                }
+                minimizedPatch.setCircumstances(lines, i);
+                DDInput linesInput = new LinesInput(diffUtils, ddmin(minimizedPatch, Granularity.LINEAR), i);
+                linesInput.removeElements();
+                minimizedPatch = linesInput;
             }
-            minimizedPatch.setCircumstances(lines, i);
-            DDInput linesInput = new LinesInput(diffUtils, ddmin(minimizedPatch, Granularity.LINEAR), i);
-            linesInput.removeElements();
-            minimizedPatch = linesInput;
         }
         minimizedPatch.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minLines.diff");
         return minimizedPatch.getDiffUtils();
