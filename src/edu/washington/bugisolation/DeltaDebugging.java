@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.washington.bugisolation.DDInput.Type;
-import edu.washington.bugisolation.util.DiffUtils;
-import edu.washington.bugisolation.util.Hunk;
 import edu.washington.bugisolation.util.Operations;
+import edu.washington.cs.dericp.diffutils.Diff;
+import edu.washington.cs.dericp.diffutils.Hunk;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 /**
  * The DeltaDebugging class allow the user to utilize a delta debugging algorithm on a
@@ -108,7 +109,7 @@ public class DeltaDebugging {
     	    input.removeElements();
     	    
     	    // generate the patch
-    	    input.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
+    	    input.getUnifiedDiff().exportUnifiedDiff(ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
     	    
 	    	result = project.applyPatch() != 0;
     	}
@@ -250,11 +251,14 @@ public class DeltaDebugging {
         
         List<Integer> circumstances = input.getCircumstances();
        
+        if (input.getKind() == Type.DIFFS) {
+            assert test(new DiffsInput(input.getUnifiedDiff(), new ArrayList<Integer>())) == PASS;
+        }
         if (input.getKind() == Type.HUNKS) {
-            assert test(new HunksInput(input.getDiffUtils(), new ArrayList<Integer>())) == PASS;
+            assert test(new HunksInput(input.getUnifiedDiff(), new ArrayList<Integer>(), input.getDiffNumber())) == PASS;
         }
         if (input.getKind() == Type.LINES) {
-            assert test(new LinesInput(input.getDiffUtils(), new ArrayList<Integer>(), input.getHunkNumber())) == PASS;        
+            assert test(new LinesInput(input.getUnifiedDiff(), new ArrayList<Integer>(), input.getDiffNumber(), input.getHunkNumber())) == PASS;        
         }
         
         assert test(input) == FAIL;
@@ -289,11 +293,14 @@ public class DeltaDebugging {
                 
                 DDInput complement = null;
                 
+                if (input.getKind() == Type.DIFFS) {
+                    complement = new DiffsInput(input.getUnifiedDiff(), minusIndices(circumstances, stop1, stop2));
+                }
                 if (input.getKind() == Type.HUNKS) {
-                    complement = new HunksInput(input.getDiffUtils(), minusIndices(circumstances, stop1, stop2));
+                    complement = new HunksInput(input.getUnifiedDiff(), minusIndices(circumstances, stop1, stop2), input.getDiffNumber());
                 }
                 if (input.getKind() == Type.LINES) {
-                    complement = new LinesInput(input.getDiffUtils(), minusIndices(circumstances, stop1, stop2), input.getHunkNumber());
+                    complement = new LinesInput(input.getUnifiedDiff(), minusIndices(circumstances, stop1, stop2), input.getDiffNumber(), input.getHunkNumber());
                 }
 
                 if (test(complement) == FAIL) {
@@ -327,40 +334,86 @@ public class DeltaDebugging {
         return circumstances;
     }
     
-    public DiffUtils minimizeHunks(DiffUtils diffUtils) {
-        List<Integer> hunks = new ArrayList<Integer>();
-        for (int i = 0; i < diffUtils.getDiff().getHunks().size(); ++i) {
-            hunks.add(i);
+    public UnifiedDiff minimizeDiffs(UnifiedDiff unifiedDiff) {
+        System.out.println("minimizing diffs");
+        if (unifiedDiff.getDiffs().size() > 1) {
+            List<Integer> circumstances = new ArrayList<Integer>();
+            for (int i = 0; i < unifiedDiff.getDiffs().size(); ++i) {
+                circumstances.add(i);
+            }
+            
+            DDInput minimizedPatch = new DiffsInput(unifiedDiff, circumstances);
+
+            minimizedPatch = new DiffsInput(unifiedDiff, ddmin(minimizedPatch, Granularity.LINEAR));
+            
+            minimizedPatch.removeElements();
+            minimizedPatch.getUnifiedDiff().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minDiffs.diff");
+            return minimizedPatch.getUnifiedDiff();
+        } else {
+            System.out.println("only one diff, no need to minimize");
+            unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minDiffs.diff");
+            return unifiedDiff;
         }
-        DDInput hunksInput = new HunksInput(diffUtils, hunks);
-        
-        DDInput minimizedPatch = new HunksInput(diffUtils, ddmin(hunksInput, Granularity.EXPONENTIAL));
-        minimizedPatch.removeElements();
-        minimizedPatch.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minHunks.diff");
-        return minimizedPatch.getDiffUtils();
     }
     
-    public DiffUtils minimizeLines(DiffUtils diffUtils) {
-        System.out.println("minimizing Lines");
-        DDInput minimizedPatch = new LinesInput(diffUtils);
-        List<Hunk> hunks = diffUtils.getDiff().getHunks();
+    public UnifiedDiff minimizeHunks(UnifiedDiff unifiedDiff) {
+        System.out.println("minimizing hunks");
         
-        // i denotes the hunk number
-        for (int i = 0; i < hunks.size(); i++) {
-            System.out.println("miniming hunk number " + i);
-            if (hunks.get(i) != null) {
-                List<Integer> lines = new ArrayList<Integer>();
-                for (int j = 0; j < diffUtils.getDiff().getHunks().get(i).getModifiedLines().size(); j++) {
-                    lines.add(j);
+        // priming the loop
+        DDInput minimizedPatch = new HunksInput(unifiedDiff);
+        
+        for (int i = 0; i < unifiedDiff.getDiffs().size(); i++) {
+            Diff currentDiff = unifiedDiff.getDiffs().get(i);
+            // if the current diff has more than one hunk
+            if (currentDiff.getHunks().size() > 1) {
+                if (currentDiff.getHunks().get(i) != null) {
+                    List<Integer> circumstances = new ArrayList<Integer>();
+                    for (int j = 0; j < currentDiff.getHunks().size(); ++j) {
+                        circumstances.add(j);
+                    }
+                    minimizedPatch.setCircumstances(circumstances, i, -1);
+                    DDInput hunksInput = new HunksInput(unifiedDiff, ddmin(minimizedPatch, Granularity.EXPONENTIAL), i);
+                    hunksInput.removeElements();
+                    minimizedPatch = hunksInput;
                 }
-                minimizedPatch.setCircumstances(lines, i);
-                DDInput linesInput = new LinesInput(diffUtils, ddmin(minimizedPatch, Granularity.LINEAR), i);
-                linesInput.removeElements();
-                minimizedPatch = linesInput;
+            } else {
+                System.out.println("only one hunk, no need to minimize");
             }
         }
-        minimizedPatch.getDiffUtils().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minLines.diff");
-        return minimizedPatch.getDiffUtils();
+        minimizedPatch.getUnifiedDiff().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minHunks.diff");
+        return minimizedPatch.getUnifiedDiff();
+    }
+    
+    public UnifiedDiff minimizeLines(UnifiedDiff unifiedDiff) {
+        System.out.println("minimizing lines");
+        
+        // priming the loop
+        DDInput minimizedPatch = new LinesInput(unifiedDiff);
+        
+        for (int i = 0; i < unifiedDiff.getDiffs().size(); ++i) {    
+            Diff currentDiff = unifiedDiff.getDiffs().get(i);
+            
+            // j denotes the hunk number
+            for (int j = 0; j < currentDiff.getHunks().size(); j++) {
+                System.out.println("minimzing diff " + i + " and hunk " + j);
+                Hunk currentHunk = currentDiff.getHunks().get(j);
+                
+                if (currentHunk == null) {
+                    System.out.println("this hunk has been remoeved");
+                } else {
+                    List<Integer> circumstances = new ArrayList<Integer>();
+                    for (int k = 0; k < currentHunk.getModifiedLines().size(); ++k) {
+                        circumstances.add(k);
+                    }
+                    minimizedPatch.setCircumstances(circumstances, i, j);
+                    DDInput linesInput = new LinesInput(unifiedDiff, ddmin(minimizedPatch, Granularity.LINEAR), i, j);
+                    linesInput.removeElements();
+                    minimizedPatch = linesInput;
+                }
+            }
+        }
+        minimizedPatch.getUnifiedDiff().exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + projectInfo.getFullProjectName() + "_" + Boolean.toString(projectInfo.isFixedToBuggy()) + "_minLines.diff");
+        return minimizedPatch.getUnifiedDiff();
     }
 }
 

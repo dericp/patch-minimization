@@ -1,4 +1,4 @@
-package edu.washington.bugisolation.util;
+/* package edu.washington.bugisolation.util;
 
 public class DiffUtils {
     
@@ -41,4 +41,4 @@ public class DiffUtils {
         diff.exportDiff(filepath);
     }
     
-}
+} */

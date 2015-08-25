@@ -5,43 +5,46 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.washington.bugisolation.util.Diff;
-import edu.washington.bugisolation.util.DiffUtils;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 public class LinesInput implements DDInput {
     
-    private DiffUtils diffUtils;
+    private UnifiedDiff unifiedDiff;
     private List<Integer> circumstances;
     private Set<Integer> removedElements;
+    private int diffNumber;
     private int hunkNumber;
     
-    public LinesInput(DiffUtils diffUtils) {
-        this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
+    public LinesInput(UnifiedDiff unifiedDiff) {
+        this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         circumstances = new ArrayList<Integer>();
         removedElements = new HashSet<Integer>();
-        hunkNumber = 0;
+        diffNumber = -1;
+        hunkNumber = -1;
     }
     
-    public LinesInput(DiffUtils diffUtils, List<Integer> circumstances, int hunkNumber) {
-        this.diffUtils = new DiffUtils(new Diff(diffUtils.getDiff()));
+    public LinesInput(UnifiedDiff unifiedDiff, List<Integer> circumstances, int diffNumber, int hunkNumber) {
+        this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
-        removedElements = new HashSet<Integer>();
         setRemovedElements();
+        this.diffNumber = diffNumber;
+        this.hunkNumber = hunkNumber;
     }
     
     public int getHunkNumber() {
         return hunkNumber;
     }
     
-    public void setCircumstances(List<Integer> circumstances, int hunkNumber) {
+    public void setCircumstances(List<Integer> circumstances, int diffNumber, int hunkNumber) {
         this.circumstances = circumstances;
+        this.diffNumber = diffNumber;
         this.hunkNumber = hunkNumber;
         setRemovedElements();
     }
     
     private void setRemovedElements() {
         removedElements = new HashSet<Integer>();
-        for (int i = 0; i < diffUtils.getDiff().getHunks().get(hunkNumber).getModifiedLines().size(); ++i) {
+        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks().get(hunkNumber).getModifiedLines().size(); ++i) {
             removedElements.add(i);
         }
         removedElements.removeAll(circumstances);
@@ -52,8 +55,8 @@ public class LinesInput implements DDInput {
         return Type.LINES;
     }
     
-    public DiffUtils getDiffUtils() {
-        return diffUtils;
+    public UnifiedDiff getUnifiedDiff() {
+        return unifiedDiff;
     }
     
     @Override
@@ -64,7 +67,13 @@ public class LinesInput implements DDInput {
     @Override
     public void removeElements() {
         for (int index : removedElements) {
-            diffUtils.removeChangeFromHunk(hunkNumber, index);
+            unifiedDiff.removeChangeFromHunk(diffNumber, hunkNumber, index);
         }
+    }
+
+    @Override
+    public int getDiffNumber() {
+        // TODO Auto-generated method stub
+        return diffNumber;
     }
 }

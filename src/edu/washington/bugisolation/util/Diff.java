@@ -1,10 +1,8 @@
-package edu.washington.bugisolation.util;
+/* package edu.washington.bugisolation.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-/* At some point, should implement a way to cleanly remove hunks that correctly updates context information */
 
 public class Diff {
     
@@ -103,4 +101,4 @@ public class Diff {
     public List<Hunk> getHunks() {
         return hunks;
     }
-}
+} */

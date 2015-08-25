@@ -1,4 +1,4 @@
-package edu.washington.bugisolation.util;
+/* package edu.washington.bugisolation.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,4 +102,4 @@ public class Hunk {
         revisedLineNumber = revisedLineNumber + change;
     }
 
-}
+} */

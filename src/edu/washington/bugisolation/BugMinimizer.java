@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import edu.washington.bugisolation.util.Diff;
-import edu.washington.bugisolation.util.DiffUtils;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+
 
 /**
  * Minimizes and isolates the bug between two versions of a program in the Defects4J database.
@@ -54,13 +54,16 @@ public class BugMinimizer {
 		/* minimize patch with delta debugging */
 		DeltaDebugging dd = new DeltaDebugging(d4jPI, d4j);
 		
-		DiffUtils diffUtils = new DiffUtils(new Diff (
-		        ProjectInfo.WORKSPACE + d4jPI.getFullProjectName() + ".diff"
-		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")
-		        , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")));
+		UnifiedDiff unifiedDiff = new UnifiedDiff(ProjectInfo.WORKSPACE + d4jPI.getFullProjectName() + ".diff");
+		
+		// right now, I know there will only one diff in each unified diff, so I can set the path manually
+		unifiedDiff.getDiffs().get(0).setFilePaths (
+		        d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java")
+                , d4jPI.getSrcDirectory() + d4jPI.getModifiedPath(".java"));
 	    
-		diffUtils.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + d4jPI.getFullProjectName() + "_" + d4jPI.isFixedToBuggy() + ".diff");
-		diffUtils = dd.minimizeHunks(diffUtils);
-		diffUtils = dd.minimizeLines(diffUtils);
+		unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/" + d4jPI.getFullProjectName() + "_" + d4jPI.isFixedToBuggy() + ".diff");
+		unifiedDiff = dd.minimizeDiffs(unifiedDiff);
+		unifiedDiff = dd.minimizeHunks(unifiedDiff);
+		unifiedDiff = dd.minimizeLines(unifiedDiff);
 	}
 }
