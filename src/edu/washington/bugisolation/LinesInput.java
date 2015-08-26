@@ -9,22 +9,23 @@ import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * An input that allows for the manipulation of lines in a unified diff.
- * 
+ *
  * @author Deric Hua Pang
  *
  */
 public class LinesInput implements DDInput {
-    
+
     private UnifiedDiff unifiedDiff;
     private List<Integer> circumstances;
     private Set<Integer> removedElements;
     private int diffNumber;
     private int hunkNumber;
-    
+
     /**
-     * Constructs a LinesInput where all fields other than unifiedDiff are set to their default
-     * irrelevant values. Circumstances should be set later by setCircumstances().
-     * 
+     * Constructs a LinesInput where all fields other than unifiedDiff are set
+     * to their default irrelevant values. Circumstances should be set later by
+     * setCircumstances().
+     *
      * @param unifiedDiff
      */
     public LinesInput(UnifiedDiff unifiedDiff) {
@@ -34,75 +35,88 @@ public class LinesInput implements DDInput {
         diffNumber = -1;
         hunkNumber = -1;
     }
-    
+
     /**
      * Constructs a new LinesInput.
-     * 
-     * @param unifiedDiff       the unified diff relevant to this input
-     * @param circumstances     the list of line numbers relevant to this input
-     * @param diffNumber        the diff number relevant to this input
-     * @param hunkNumber        the hunk number relevant to this input
+     *
+     * @param unifiedDiff
+     *            the unified diff relevant to this input
+     * @param circumstances
+     *            the list of line numbers relevant to this input
+     * @param diffNumber
+     *            the diff number relevant to this input
+     * @param hunkNumber
+     *            the hunk number relevant to this input
      */
-    public LinesInput(UnifiedDiff unifiedDiff, List<Integer> circumstances, int diffNumber, int hunkNumber) {
+    public LinesInput(UnifiedDiff unifiedDiff, List<Integer> circumstances,
+            int diffNumber, int hunkNumber) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
         setRemovedElements();
         this.diffNumber = diffNumber;
         this.hunkNumber = hunkNumber;
     }
-    
+
     /**
      * Sets the elements that should be removed by removeElements().
      */
     private void setRemovedElements() {
         removedElements = new HashSet<Integer>();
-        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks().get(hunkNumber).getModifiedLines().size(); ++i) {
+        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks()
+                .get(hunkNumber).getModifiedLines().size(); ++i) {
             removedElements.add(i);
         }
         removedElements.removeAll(circumstances);
     }
-    
+
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#getHunkNumber()
      */
     @Override
     public int getHunkNumber() {
         return hunkNumber;
     }
-    
+
     /*
      * (non-Javadoc)
-     * @see edu.washington.bugisolation.DDInput#setCircumstances(java.util.List, int, int)
+     *
+     * @see edu.washington.bugisolation.DDInput#setCircumstances(java.util.List,
+     * int, int)
      */
     @Override
-    public void setCircumstances(List<Integer> circumstances, int diffNumber, int hunkNumber) {
+    public void setCircumstances(List<Integer> circumstances, int diffNumber,
+            int hunkNumber) {
         this.circumstances = circumstances;
         this.diffNumber = diffNumber;
         this.hunkNumber = hunkNumber;
         setRemovedElements();
     }
-    
+
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#getInputType()
      */
     @Override
     public InputType getInputType() {
         return InputType.LINES;
     }
-    
+
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#getUnifiedDiff()
      */
     @Override
     public UnifiedDiff getUnifiedDiff() {
         return unifiedDiff;
     }
-    
+
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#getCircumstances()
      */
     @Override
@@ -112,6 +126,7 @@ public class LinesInput implements DDInput {
 
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#removeElements()
      */
     @Override
@@ -123,6 +138,7 @@ public class LinesInput implements DDInput {
 
     /*
      * (non-Javadoc)
+     *
      * @see edu.washington.bugisolation.DDInput#getDiffNumber()
      */
     @Override
