@@ -21,7 +21,7 @@ public class DiffsInput implements DDInput {
     private int hunkNumber;
     
     /**
-     * Creates a new DiffsInput.
+     * Constructs a new DiffsInput.
      * 
      * @param unifiedDiff       the unified diff relevant to this input
      * @param circumstances     a list of diff numbers relevant to this input

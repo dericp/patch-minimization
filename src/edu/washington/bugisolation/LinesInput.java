@@ -22,7 +22,7 @@ public class LinesInput implements DDInput {
     private int hunkNumber;
     
     /**
-     * Creates a LinesInput where all fields other than unifiedDiff are set to their default
+     * Constructs a LinesInput where all fields other than unifiedDiff are set to their default
      * irrelevant values. Circumstances should be set later by setCircumstances().
      * 
      * @param unifiedDiff
@@ -36,7 +36,7 @@ public class LinesInput implements DDInput {
     }
     
     /**
-     * Creates a new LinesInput.
+     * Constructs a new LinesInput.
      * 
      * @param unifiedDiff       the unified diff relevant to this input
      * @param circumstances     the list of line numbers relevant to this input

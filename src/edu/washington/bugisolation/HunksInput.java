@@ -22,7 +22,7 @@ public class HunksInput implements DDInput {
     private int hunkNumber;
     
     /**
-     * Creates a new HunksInput where all fields other than unifiedDiff are set to their default
+     * Constructs a new HunksInput where all fields other than unifiedDiff are set to their default
      * irrelevant values. Circumstances should be set later by setCircumstances().
      * 
      * @param unifiedDiff   the unified diff relevant to this input
@@ -36,7 +36,7 @@ public class HunksInput implements DDInput {
     }
     
     /**
-     * Creates a new HunksInput.
+     * Constructs a new HunksInput.
      * 
      * @param unifiedDiff       the unified diff relevant to this input
      * @param circumstances     a list of hunk numbers relevant to this input
