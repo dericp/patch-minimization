@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.washington.bugisolation.util.Operations;
+import edu.washington.bugisolation.util.Utils;
 
 public class Diff {
     
@@ -23,7 +23,7 @@ public class Diff {
     }
     
     public Diff(String filePath) {
-        this(Operations.fileToLines(filePath));
+        this(Utils.fileToLines(filePath));
     }
     
     // Special constructor that copies a diff.

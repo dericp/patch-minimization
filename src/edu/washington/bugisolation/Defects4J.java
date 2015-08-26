@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import edu.washington.bugisolation.util.Operations;
+import edu.washington.bugisolation.util.Utils;
 
 /**
  * The Defects4j class is used to perform all Defects4J operations required for the
@@ -41,7 +41,7 @@ public class Defects4J implements Project {
 	 * @return				an int, denoting the exit value of the process
 	 */
 	public int d4jOperation(String command, String directory) {
-	    return Operations.commandLine(ProjectInfo.D4J_LOCATION + " " + command, directory);
+	    return Utils.commandLine(ProjectInfo.D4J_LOCATION + " " + command, directory);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class Defects4J implements Project {
 	 */
 	private int gitOperation(String command, String directory) {
 	    System.out.println(command);
-		return Operations.commandLine("git " + command, directory);
+		return Utils.commandLine("git " + command, directory);
 	}
 	
 	/*
@@ -114,8 +114,8 @@ public class Defects4J implements Project {
 		d4jOperation("export -p tests.all -o tests.all", projectInfo.getFixedDirectory());
 		d4jOperation("export -p tests.relevant -o tests.relevant", projectInfo.getFixedDirectory());
 		
-		List<String> testNames = Operations.fileToLines(projectInfo.getFixedDirectory() + "tests.all");
-		List<String> relevantTests = Operations.fileToLines(projectInfo.getFixedDirectory() + "tests.relevant");
+		List<String> testNames = Utils.fileToLines(projectInfo.getFixedDirectory() + "tests.all");
+		List<String> relevantTests = Utils.fileToLines(projectInfo.getFixedDirectory() + "tests.relevant");
 		
 		testNames.removeAll(relevantTests);
 		
@@ -160,7 +160,7 @@ public class Defects4J implements Project {
 	public List<String> getFailingTests() {
 		System.out.println("Getting failing tests");
 		
-		return Operations.getTests(projectInfo.getRelevantDirectory() + ".failing_tests");
+		return Utils.getTests(projectInfo.getRelevantDirectory() + ".failing_tests");
 	}
 	
 	/*
@@ -171,7 +171,7 @@ public class Defects4J implements Project {
     public void generatePatch() {
 	    System.out.println("Generating initial patch");
 	    if (projectInfo.isFixedToBuggy()) {
-	           Operations.commandLine (
+	           Utils.commandLine (
 	                    "git diff " + projectInfo.getFixedDirectory()
 	                    + projectInfo.getSrcDirectory()
 	                    + projectInfo.getRelevantFilePath(".java")
@@ -182,7 +182,7 @@ public class Defects4J implements Project {
 	                    , ProjectInfo.WORKSPACE
 	                    , ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
 	    } else {
-    	    Operations.commandLine (
+    	    Utils.commandLine (
     	            "git diff " + projectInfo.getBuggyDirectory()
     	            + projectInfo.getSrcDirectory()
     	            + projectInfo.getRelevantFilePath(".java")

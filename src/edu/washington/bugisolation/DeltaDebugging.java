@@ -10,7 +10,7 @@ import edu.washington.bugisolation.DDInput.InputType;
 import edu.washington.bugisolation.diffutils.Diff;
 import edu.washington.bugisolation.diffutils.Hunk;
 import edu.washington.bugisolation.diffutils.UnifiedDiff;
-import edu.washington.bugisolation.util.Operations;
+import edu.washington.bugisolation.util.Utils;
 
 /**
  * The DeltaDebugging class allows for the minimization of a diff/patch through the process
@@ -131,7 +131,7 @@ public class DeltaDebugging {
     	project.reset();
     	System.out.println("Configuration returned " + result);
     	System.out.println();
-		return Operations.boolToInt(result);
+		return Utils.boolToInt(result);
     }
     
     /**

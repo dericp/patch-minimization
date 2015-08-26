@@ -17,7 +17,7 @@ import java.util.Scanner;
  * @author dpang
  *
  */
-public class Operations {
+public class Utils {
 	
 	public static final boolean DEBUG = true;
 
@@ -158,7 +158,7 @@ public class Operations {
 	 * 						the designated file-path
 	 */
 	public static List<String> getTests(String filePath) {
-        List<String> lines = Operations.fileToLines(filePath);
+        List<String> lines = Utils.fileToLines(filePath);
         List<String> result = new ArrayList<String>();
         Iterator<String> iter = lines.listIterator();
         while(iter.hasNext()) {
