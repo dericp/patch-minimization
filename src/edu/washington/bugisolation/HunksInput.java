@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * An input that allows for the manipulation of hunks in a unified diff.
@@ -60,16 +60,28 @@ public class HunksInput implements DDInput {
         removedElements.removeAll(circumstances);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getInputType()
+     */
     @Override
     public InputType getInputType() {
         return InputType.HUNKS;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getUnifiedDiff()
+     */
     @Override
     public UnifiedDiff getUnifiedDiff() {
         return unifiedDiff;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getCircumstances()
+     */
     @Override
     public List<Integer> getCircumstances() {
         return circumstances;
@@ -87,6 +99,10 @@ public class HunksInput implements DDInput {
         setRemovedElements();
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#removeElements()
+     */
     @Override
     public void removeElements() {
         for (int index : removedElements) {
@@ -94,14 +110,21 @@ public class HunksInput implements DDInput {
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getDiffNumber()
+     */
     @Override
     public int getDiffNumber() {
         return diffNumber;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getHunkNumber()
+     */
     @Override
     public int getHunkNumber() {
-        // TODO Auto-generated method stub
         return hunkNumber;
     }
 

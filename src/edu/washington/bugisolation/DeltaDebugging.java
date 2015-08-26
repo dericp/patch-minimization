@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.washington.bugisolation.DDInput.InputType;
+import edu.washington.bugisolation.diffutils.Diff;
+import edu.washington.bugisolation.diffutils.Hunk;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
 import edu.washington.bugisolation.util.Operations;
-import edu.washington.cs.dericp.diffutils.Diff;
-import edu.washington.cs.dericp.diffutils.Hunk;
-import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 /**
  * The DeltaDebugging class allows for the minimization of a diff/patch through the process

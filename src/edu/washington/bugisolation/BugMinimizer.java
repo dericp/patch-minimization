@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 
 /**

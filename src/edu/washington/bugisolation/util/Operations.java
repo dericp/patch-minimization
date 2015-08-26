@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,12 +24,12 @@ public class Operations {
 	/**
 	 * Runs a command on the command line.
 	 * 
-	 * @param command			a String, the command that is to be executed on the command line,
+	 * @param command			the command that is to be executed on the command line,
 	 * 							has a space between each argument
-	 * @param directory			a String, the directory in which the command will be executed
-	 * @param outputFilePath	a String, the path to which the output of the command line process
-	 * 							will be saved
-	 * @return					an int, denoting the exit value of the command process
+	 * @param directory			the directory in which the command will be executed
+	 * @param outputFilePath	the path to which the output of the command
+	 *                          line process will be saved
+	 * @return					denoting the exit value of the command process
 	 */
 	public static int commandLine(String command, String directory, String outputFilePath) {
 		ArrayList<String> commandList = new ArrayList<String>();
@@ -49,9 +48,9 @@ public class Operations {
 	/**
 	 * Runs a command on the command line.
 	 * 
-	 * @param command		a String, the command that is to be executed on the command line,
+	 * @param command		the command that is to be executed on the command line,
 	 * 						has a space between each argument
-	 * @param directory		a String, the directory in which the command will be executed
+	 * @param directory		the directory in which the command will be executed
 	 * @return
 	 */
 	public static int commandLine(String command, String directory) {
@@ -62,9 +61,9 @@ public class Operations {
     /**
      * Starts a process.
      * 
-     * @param commandList	a List, contains each argument as an element
-     * @param directory		a String, the directory in which the process will be executed
-     * @return				an int, denoting the exit value of the process
+     * @param commandList	contains each argument as an element
+     * @param directory		the directory in which the process will be executed
+     * @return				the exit value of the process
      */
 	private static int startProcess(List<String> commandList, String directory) {
 		return startProcess(commandList, directory, null);
@@ -73,9 +72,9 @@ public class Operations {
 	/**
 	 * Starts a process.
 	 * 
-	 * @param commandList		a List, contains each argument as an element
-	 * @param directory			a String, the directory in which the process will be executed
-	 * @param outputFilePath	a String, the file to which the output of the process will be saved
+	 * @param commandList		contains each argument as an element
+	 * @param directory			the directory in which the process will be executed
+	 * @param outputFilePath	the file to which the output of the process will be saved
 	 * @return
 	 */
 	private static int startProcess(List<String> commandList, String directory, String outputFilePath) {
@@ -96,7 +95,7 @@ public class Operations {
 	        }
 	        
 	        int exitVal = pr.waitFor();
-	        // System.out.println("Exited with error code " + exitVal);
+	        System.out.println("Exited with error code " + exitVal);
 	        return exitVal;
 	        
 		} catch (IOException | InterruptedException e) {
@@ -114,7 +113,7 @@ public class Operations {
 	 * 						at the designated file-path
 	 */
 	public static List<String> fileToLines(String filePath) {
-        List<String> lines = new LinkedList<String>();
+        List<String> lines = new ArrayList<String>();
         String line = "";
         try {
             BufferedReader in = new BufferedReader(new FileReader(filePath));
@@ -160,13 +159,12 @@ public class Operations {
 	 */
 	public static List<String> getTests(String filePath) {
         List<String> lines = Operations.fileToLines(filePath);
-        List<String> result = new LinkedList<String>();
+        List<String> result = new ArrayList<String>();
         Iterator<String> iter = lines.listIterator();
         while(iter.hasNext()) {
         	String line = iter.next();
         	if (line.startsWith("---")) {
         		result.add(line.substring(4));
-        		//result.add(iter.next());
         	}
         }
         return result;

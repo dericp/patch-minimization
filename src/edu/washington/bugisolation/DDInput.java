@@ -2,7 +2,8 @@ package edu.washington.bugisolation;
 
 import java.util.List;
 
-import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
+
 
 /**
  * An interface that defines the functions needed for the delta debugging process.

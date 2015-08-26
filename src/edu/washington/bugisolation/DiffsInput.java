@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * An input that allows for the manipulation of diffs in a unified diff.
