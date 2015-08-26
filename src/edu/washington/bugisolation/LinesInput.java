@@ -7,6 +7,12 @@ import java.util.Set;
 
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
+/**
+ * An input that allows for the manipulation of lines in a unified diff.
+ * 
+ * @author Deric Hua Pang
+ *
+ */
 public class LinesInput implements DDInput {
     
     private UnifiedDiff unifiedDiff;
@@ -15,6 +21,12 @@ public class LinesInput implements DDInput {
     private int diffNumber;
     private int hunkNumber;
     
+    /**
+     * Creates a LinesInput where all fields other than unifiedDiff are set to their default
+     * irrelevant values. Circumstances should be set later by setCircumstances().
+     * 
+     * @param unifiedDiff
+     */
     public LinesInput(UnifiedDiff unifiedDiff) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         circumstances = new ArrayList<Integer>();
@@ -23,6 +35,14 @@ public class LinesInput implements DDInput {
         hunkNumber = -1;
     }
     
+    /**
+     * Creates a new LinesInput.
+     * 
+     * @param unifiedDiff       the unified diff relevant to this input
+     * @param circumstances     the list of line numbers relevant to this input
+     * @param diffNumber        the diff number relevant to this input
+     * @param hunkNumber        the hunk number relevant to this input
+     */
     public LinesInput(UnifiedDiff unifiedDiff, List<Integer> circumstances, int diffNumber, int hunkNumber) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
@@ -31,17 +51,9 @@ public class LinesInput implements DDInput {
         this.hunkNumber = hunkNumber;
     }
     
-    public int getHunkNumber() {
-        return hunkNumber;
-    }
-    
-    public void setCircumstances(List<Integer> circumstances, int diffNumber, int hunkNumber) {
-        this.circumstances = circumstances;
-        this.diffNumber = diffNumber;
-        this.hunkNumber = hunkNumber;
-        setRemovedElements();
-    }
-    
+    /**
+     * Sets the elements that should be removed by removeElements().
+     */
     private void setRemovedElements() {
         removedElements = new HashSet<Integer>();
         for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks().get(hunkNumber).getModifiedLines().size(); ++i) {
@@ -50,20 +62,58 @@ public class LinesInput implements DDInput {
         removedElements.removeAll(circumstances);
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getHunkNumber()
+     */
     @Override
-    public Type getKind() {
-        return Type.LINES;
+    public int getHunkNumber() {
+        return hunkNumber;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#setCircumstances(java.util.List, int, int)
+     */
+    @Override
+    public void setCircumstances(List<Integer> circumstances, int diffNumber, int hunkNumber) {
+        this.circumstances = circumstances;
+        this.diffNumber = diffNumber;
+        this.hunkNumber = hunkNumber;
+        setRemovedElements();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getInputType()
+     */
+    @Override
+    public InputType getInputType() {
+        return InputType.LINES;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getUnifiedDiff()
+     */
+    @Override
     public UnifiedDiff getUnifiedDiff() {
         return unifiedDiff;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getCircumstances()
+     */
     @Override
     public List<Integer> getCircumstances() {
         return circumstances;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#removeElements()
+     */
     @Override
     public void removeElements() {
         for (int index : removedElements) {
@@ -71,6 +121,10 @@ public class LinesInput implements DDInput {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getDiffNumber()
+     */
     @Override
     public int getDiffNumber() {
         // TODO Auto-generated method stub

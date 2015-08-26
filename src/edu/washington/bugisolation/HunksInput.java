@@ -7,6 +7,12 @@ import java.util.Set;
 
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
+/**
+ * An input that allows for the manipulation of hunks in a unified diff.
+ * 
+ * @author Deric Hua Pang
+ *
+ */
 public class HunksInput implements DDInput {
 
     private UnifiedDiff unifiedDiff;
@@ -15,6 +21,12 @@ public class HunksInput implements DDInput {
     private int diffNumber;
     private int hunkNumber;
     
+    /**
+     * Creates a new HunksInput where all fields other than unifiedDiff are set to their default
+     * irrelevant values. Circumstances should be set later by setCircumstances().
+     * 
+     * @param unifiedDiff   the unified diff relevant to this input
+     */
     public HunksInput(UnifiedDiff unifiedDiff) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         circumstances = new ArrayList<Integer>();
@@ -23,9 +35,14 @@ public class HunksInput implements DDInput {
         hunkNumber = -1;
     }
     
+    /**
+     * Creates a new HunksInput.
+     * 
+     * @param unifiedDiff       the unified diff relevant to this input
+     * @param circumstances     a list of hunk numbers relevant to this input
+     * @param diffNumber        the diff number relevant to this input
+     */
     public HunksInput(UnifiedDiff unifiedDiff, List<Integer> circumstances, int diffNumber) {
-        // this.diffUtils = diffUtils;
-        // ^ that doesn't work because it means that every HunksInput will be modifying the same object
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
         removedElements = new HashSet<Integer>();
@@ -33,11 +50,22 @@ public class HunksInput implements DDInput {
         this.diffNumber = diffNumber;
     }
     
-    @Override
-    public Type getKind() {
-        return Type.HUNKS;
+    /**
+     * Sets the elements that should be removed by removeElements().
+     */
+    private void setRemovedElements() {
+        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks().size(); ++i) {
+            removedElements.add(i);
+        }
+        removedElements.removeAll(circumstances);
     }
     
+    @Override
+    public InputType getInputType() {
+        return InputType.HUNKS;
+    }
+    
+    @Override
     public UnifiedDiff getUnifiedDiff() {
         return unifiedDiff;
     }
@@ -47,6 +75,11 @@ public class HunksInput implements DDInput {
         return circumstances;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#setCircumstances(java.util.List, int, int)
+     */
+    @Override
     public void setCircumstances(List<Integer> circumstances, int diffNumber, int hunkNumber) {
         this.circumstances = circumstances;
         this.diffNumber = diffNumber;
@@ -54,19 +87,14 @@ public class HunksInput implements DDInput {
         setRemovedElements();
     }
     
-    private void setRemovedElements() {
-        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks().size(); ++i) {
-            removedElements.add(i);
-        }
-        removedElements.removeAll(circumstances);
-    }
-    
+    @Override
     public void removeElements() {
         for (int index : removedElements) {
             unifiedDiff.removeHunk(diffNumber, index);
         }
     }
     
+    @Override
     public int getDiffNumber() {
         return diffNumber;
     }

@@ -2,100 +2,120 @@ package edu.washington.bugisolation;
 
 import java.util.List;
 
+/**
+ * An interface that defines the information that the bug minimizer needs to operate.
+ * 
+ * @author Deric Hua pang
+ *
+ */
 public interface ProjectInfo {
 
-	public static final String D4J_LOCATION = "/Users/dpang/workspace/defects4j-github/";
+	public static final String D4J_LOCATION = "sh /Users/dpang/workspace/defects4j-github/defects4j.sh";
 	public static final String WORKSPACE = "/Users/dpang/workspace/";
 
 	/**
 	 * Gets the name of the current project.
 	 * 
-	 * @return	a String, the name of the current project
+	 * @return     the name of the current project
 	 */
 	public abstract String getProjectName();
 
 	/**
 	 * Gets the version of the current project.
 	 * 
-	 * @return	a String, the version number of the current project
+	 * @return     the version number of the current project
 	 */
 	public abstract String getProjectVersion();
 	
 	/**
-	 * Returns whether or not the minimization process is from buggy to fixed versions.
+	 * Return whether or not the minimization is on the fixed or buggy version of the project
 	 * 
-	 * @return	a boolean, whether the minimization process is from buggy to fixed
+	 * @return     whether or not the minimization process is from buggy to fixed
 	 */
 	public abstract boolean isFixedToBuggy();
 	
 	/**
 	 * Gets the full name of the current project.
 	 * 
-	 * @return	a String, contains the project name and version separated by an underscore
+	 * @return     the project name and version separated by an underscore
 	 */
 	public abstract String getFullProjectName();
 
 	/**
 	 * Gets the full fixed name of the current project.
 	 * 
-	 * @return	a String, the full project name followed by _fixed
+	 * @return     the full project name followed by "_fixed"
 	 */
 	public abstract String getFixedName();
 	
+	/**
+	 * Gets the directory of the fixed version of the project.
+	 * 
+	 * @return     the directory of the fixed version of the project
+	 */
 	public abstract String getFixedDirectory();
 
 	/**
 	 * Gets the full buggy name of the current project.
 	 * 
-	 * @return	a String, the full project name followed by _buggy
+	 * @return	the full project name followed by "_buggy"
 	 */
 	public abstract String getBuggyName();
 	
+    /**
+     * Gets the directory of the buggy version of the project.
+     * 
+     * @return     the directory of the buggy version of the project
+     */
 	public abstract String getBuggyDirectory();
 	
-	public abstract String getModifiedDirectory();
+	/**
+	 * Gets the directory of the version of the project that patches are to be applied.
+	 * 
+	 * @return     the directory of the version of the project that patches are to be applied
+	 */
+	public abstract String getRelevantDirectory();
 	
-	public abstract String getModifiedName();
+	/**
+	 * Gets the name of the project that patches are to be applied.
+	 * 
+	 * @return     either the fixed name or the buggy name of the project, depending
+	 *             on the direction of minimization
+	 */
+	public abstract String getRelevantName();
 
 	/**
 	 * Gets the A diff file-path.
 	 * 
-	 * @return	a String, the A diff file-path
+	 * @return	the A diff file-path
 	 */
 	public abstract String getDiffPathA();
 
 	/**
 	 * Gets the B diff file-path.
 	 * 
-	 * @return	a String, the B diff file-path
+	 * @return	the B diff file-path
 	 */
 	public abstract String getDiffPathB();
 
 	/**
-	 * Sets the trigger tests for the current project.
+	 * Gets the trigger tests for the project.
 	 * 
-	 * @param file	a File, containing information about the trigger tests
-	 */
-	//public abstract void setTriggerTests(List<String> file);
-
-	/**
-	 * Gets the trigger tests for the current project.
-	 * 
-	 * @return	a List of Strings, the trigger tests for the current project
+	 * @return	the trigger tests for the project
 	 */
 	public abstract List<String> getTriggerTests();
 	
 	/**
-	 * Gets the source directory for the current project.
+	 * Gets the source directory for the project.
 	 * 
-	 * @return	a String, the source directory of the project
+	 * @return	the source directory of the project
 	 */
 	public abstract String getSrcDirectory();
 	
 	/**
-	 * Gets the directory containing the test files of the current project.
+	 * Gets the directory containing the test files of the project.
 	 * 
-	 * @return	a String, the directory containing the test files
+	 * @return	the directory containing the test files of the project
 	 */
 	public abstract String getTestDirectory();
 
@@ -113,34 +133,39 @@ public interface ProjectInfo {
 	 */
 	public abstract List<String> getBuggyFile();
 	
-	public abstract List<String> getModifiedFile();
+	/**
+	 * Gets the modified file that patches are to be applied.
+	 * 
+	 * @return     a List of Strings the represent the relevant modified file
+	 */
+	public abstract List<String> getRelevantFile();
 
 	/**
-	 * Gets the modified class name.
+	 * Gets the relevant file's fully qualified name.
 	 * 
-	 * @return	a String, the name of the modified class
+	 * @return	the fully qualified name of the relevant file
 	 */
-	public abstract String getModifiedFullyQualifiedName();
+	public abstract String getRelevantFullyQualifiedName();
 	
 	/**
-	 * Gets the file-path in the src directory of the modified class
+	 * Gets the file-path in the src or test directory of the project.
 	 * 
-	 * @param extension 	a String, denoting the extension of the file
-	 * @return				a String that is the file-path of the modified class
+	 * @param extension 	the extension of the file
+	 * @return				the file-path of the relevant file in the src or test directory
 	 */
-	public abstract String getModifiedPath(String extension);
+	public abstract String getRelevantFilePath(String extension);
 
 	/**
-	 * Sets the fixed file for the current project.
+	 * Sets the fixed version of the relevant file for the project.
 	 * 
-	 * @param file	a File that is the fixed modified file
+	 * @param file	the fixed version of the relevant file
 	 */
 	public abstract void setFixedFile(List<String> file);
 
 	/**
-	 * Sets the buggy file for the current project.
+	 * Sets the buggy version of the relevant file for the project.
 	 * 
-	 * @param file	a File that is the buggy modified file
+	 * @param file	the buggy version of the relevant file
 	 */
 	public abstract void setBuggyFile(List<String> file);
 

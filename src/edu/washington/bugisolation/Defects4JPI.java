@@ -16,22 +16,23 @@ import java.util.Properties;
  */
 public class Defects4JPI implements ProjectInfo {
 	
-	/* basic project information */
+	// basic project information
 	private String projectName;
 	private String projectVersion;
 	private boolean fixedToBuggy;
 	
-	/* the lines of the fixed modified file */
+	// the lines of the fixed modified file
 	private List<String> fixedFile;
-	
-	/* the lines of the buggy modified file */
+	// the lines of the buggy modified file
 	private List<String> buggyFile;
 	
 	/**
 	 * Creates a new Defects4jPI.
 	 * 
-	 * @param projectName		a String, the name of the project
-	 * @param projectVersion	a String, the version number of the project
+	 * @param projectName		the name of the project
+	 * @param projectVersion	the version number of the project
+	 * @param fixedTobuggy      whether or not the minimization is on the fixed or buggy
+	 *                          version of the project
 	 */
 	public Defects4JPI(String projectName, String projectVersion, boolean fixedToBuggy) {
 		
@@ -43,7 +44,12 @@ public class Defects4JPI implements ProjectInfo {
 		buggyFile = new LinkedList<String>();
 	}
 	
-	/* can only be executed after checkout has been called */
+	/**
+	 * Gets a property from the defects4j property file included in checked out project.
+	 * 
+	 * @param property     the string that denotes the property to be returned
+	 * @return             the value of the property
+	 */
 	private String getD4JProperty(String property) {
 	    Properties props = new Properties();
 	    try {
@@ -58,7 +64,8 @@ public class Defects4JPI implements ProjectInfo {
 	    return props.getProperty(property);
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getProjectName()
 	 */
 	@Override
@@ -66,7 +73,8 @@ public class Defects4JPI implements ProjectInfo {
 		return projectName;
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getProjectVersion()
 	 */
 	@Override
@@ -83,7 +91,8 @@ public class Defects4JPI implements ProjectInfo {
 		return fixedToBuggy;
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getFullProjectName()
 	 */
 	@Override
@@ -91,18 +100,26 @@ public class Defects4JPI implements ProjectInfo {
 		return projectName + '_' + projectVersion;
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getFixedName()
 	 */
-	public String getFixedName() {
+	@Override
+    public String getFixedName() {
 		return getFullProjectName() + "_fixed";
 	}
 	
-	public String getFixedDirectory() {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.washington.bugisolation.ProjectInfo#getFixedDirectory()
+	 */
+	@Override
+    public String getFixedDirectory() {
 		return ProjectInfo.WORKSPACE + getFixedName() + '/';
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getBuggyName()
 	 */
 	@Override
@@ -110,11 +127,21 @@ public class Defects4JPI implements ProjectInfo {
 		return getFullProjectName() + "_buggy";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see edu.washington.bugisolation.ProjectInfo#getBuggyDirectory()
+	 */
+	@Override
 	public String getBuggyDirectory() {
 		return ProjectInfo.WORKSPACE + getBuggyName() + '/';
 	}
 	
-	public String getModifiedDirectory() {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedDirectory()
+	 */
+	@Override
+    public String getRelevantDirectory() {
 	    if (fixedToBuggy) {
 	        return getFixedDirectory();
 	    } else {
@@ -122,7 +149,8 @@ public class Defects4JPI implements ProjectInfo {
 	    }
 	}
 	
-	public String getModifiedName() {
+	@Override
+    public String getRelevantName() {
 	    if (fixedToBuggy) {
 	        return getFixedName();
 	    } else {
@@ -130,22 +158,26 @@ public class Defects4JPI implements ProjectInfo {
 	    }
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getDiffPathA()
 	 */
 	@Override
 	public String getDiffPathA() {
-		return "a/" + getSrcDirectory() + getModifiedPath(".java");
+		return "a/" + getSrcDirectory() + getRelevantFilePath(".java");
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getDiffPathB()
 	 */
-	public String getDiffPathB() {
-		return "b/" + getSrcDirectory() + getModifiedPath(".java");
+	@Override
+    public String getDiffPathB() {
+		return "b/" + getSrcDirectory() + getRelevantFilePath(".java");
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getTriggerTests()
 	 */
 	@Override
@@ -172,7 +204,8 @@ public class Defects4JPI implements ProjectInfo {
 	    return getD4JProperty("d4j.dir.src.tests") + '/';
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getFixedFile()
 	 */
 	@Override
@@ -180,7 +213,8 @@ public class Defects4JPI implements ProjectInfo {
 		return fixedFile;
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getBuggyFile()
 	 */
 	@Override
@@ -188,7 +222,12 @@ public class Defects4JPI implements ProjectInfo {
 		return buggyFile;
 	}
 	
-	public List<String> getModifiedFile() {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedFile()
+	 */
+	@Override
+    public List<String> getRelevantFile() {
 	    if (fixedToBuggy) {
 	        return fixedFile;
 	    } else {
@@ -196,7 +235,8 @@ public class Defects4JPI implements ProjectInfo {
 	    }
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#setFixedFile(java.util.List)
 	 */
 	@Override
@@ -204,7 +244,8 @@ public class Defects4JPI implements ProjectInfo {
 		fixedFile = file;
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#setBuggyFile(java.util.List)
 	 */
 	@Override
@@ -217,15 +258,16 @@ public class Defects4JPI implements ProjectInfo {
 	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedClass()
 	 */
 	@Override
-	public String getModifiedFullyQualifiedName() {
+	public String getRelevantFullyQualifiedName() {
 	    return getD4JProperty("d4j.classes.modified");
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.ProjectInfo#getModifiedClass()
 	 */
 	@Override
-	public String getModifiedPath(String extension) {
-		return getModifiedFullyQualifiedName().replace('.', '/') + extension;
+	public String getRelevantFilePath(String extension) {
+		return getRelevantFullyQualifiedName().replace('.', '/') + extension;
 	}	
 }

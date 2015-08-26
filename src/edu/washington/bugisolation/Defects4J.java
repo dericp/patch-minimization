@@ -19,7 +19,7 @@ import edu.washington.bugisolation.util.Operations;
  */
 public class Defects4J implements Project {
 	
-	/* A ProjectInfo that stores all the information of the project */
+	// this ProjectInfo stores all the information about the project
 	private ProjectInfo projectInfo;
 	
 	
@@ -35,23 +35,21 @@ public class Defects4J implements Project {
 	/**
 	 * Helper method that runs any Defects4J command.
 	 * 
-	 * @param command		a String, the Defects4J command that is to be executed,
+	 * @param command		the Defects4J command that is to be executed,
 	 * 						contains a space between each argument
-	 * @param directory		a String, the directory in which the command will be executed
+	 * @param directory		the directory in which the command will be executed
 	 * @return				an int, denoting the exit value of the process
 	 */
 	public int d4jOperation(String command, String directory) {
-	    return Operations.commandLine (
-	            "sh " + ProjectInfo.D4J_LOCATION + "defects4j.sh " + command
-	            , directory);
+	    return Operations.commandLine(ProjectInfo.D4J_LOCATION + " " + command, directory);
 	}
 	
 	/**
 	 * Helper method that runs any git command.
 	 * 
-	 * @param command		a String, the git command that is to be executed,
+	 * @param command		the git command that is to be executed,
 	 * 						contains a space between each argument 
-	 * @param directory		a String, the directory in which the command will be executed
+	 * @param directory		the directory in which the command will be executed
 	 * @return				an int, denoting the exti value of the process
 	 */
 	private int gitOperation(String command, String directory) {
@@ -72,7 +70,7 @@ public class Defects4J implements Project {
 		gitOperation("add -A", projectInfo.getFixedDirectory());
 		gitOperation (
 		        "rm -f " + projectInfo.getFixedDirectory() + "target/classes/"
-		        + projectInfo.getModifiedPath("*")
+		        + projectInfo.getRelevantFilePath("*")
 		        , projectInfo.getFixedDirectory());
 		gitOperation("commit -mjava", projectInfo.getFixedDirectory());
 		gitOperation (
@@ -82,7 +80,7 @@ public class Defects4J implements Project {
 		gitOperation("add -A", projectInfo.getBuggyDirectory());
 		gitOperation (
 		        "rm -f " + projectInfo.getBuggyDirectory()
-		        + "target/classes/" + projectInfo.getModifiedPath("*")
+		        + "target/classes/" + projectInfo.getRelevantFilePath("*")
 		        , projectInfo.getBuggyDirectory());
 		gitOperation("commit -mjava", projectInfo.getBuggyDirectory());
 		gitOperation (
@@ -154,44 +152,51 @@ public class Defects4J implements Project {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.Project#getFailingTests()
 	 */
 	@Override
 	public List<String> getFailingTests() {
 		System.out.println("Getting failing tests");
 		
-		return Operations.getTests(projectInfo.getModifiedDirectory() + ".failing_tests");
+		return Operations.getTests(projectInfo.getRelevantDirectory() + ".failing_tests");
 	}
 	
-	public void generatePatch() {
+	/*
+	 * (non-Javadoc)
+	 * @see edu.washington.bugisolation.Project#generatePatch()
+	 */
+	@Override
+    public void generatePatch() {
 	    System.out.println("Generating initial patch");
 	    if (projectInfo.isFixedToBuggy()) {
 	           Operations.commandLine (
 	                    "git diff " + projectInfo.getFixedDirectory()
 	                    + projectInfo.getSrcDirectory()
-	                    + projectInfo.getModifiedPath(".java")
+	                    + projectInfo.getRelevantFilePath(".java")
 	                    + " "
 	                    + projectInfo.getBuggyDirectory()
 	                    + projectInfo.getSrcDirectory()
-	                    + projectInfo.getModifiedPath(".java")
+	                    + projectInfo.getRelevantFilePath(".java")
 	                    , ProjectInfo.WORKSPACE
 	                    , ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
 	    } else {
     	    Operations.commandLine (
     	            "git diff " + projectInfo.getBuggyDirectory()
     	            + projectInfo.getSrcDirectory()
-    	            + projectInfo.getModifiedPath(".java")
+    	            + projectInfo.getRelevantFilePath(".java")
     	            + " "
     	            + projectInfo.getFixedDirectory()
     	            + projectInfo.getSrcDirectory()
-    	            + projectInfo.getModifiedPath(".java")
+    	            + projectInfo.getRelevantFilePath(".java")
     	            , ProjectInfo.WORKSPACE
     	            , ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff");
 	    }
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.Project#applyPatch()
 	 */
 	@Override
@@ -200,7 +205,7 @@ public class Defects4J implements Project {
 		
 		return gitOperation (
                 "apply " + ProjectInfo.WORKSPACE + projectInfo.getFullProjectName() + ".diff"
-                , projectInfo.getModifiedDirectory());
+                , projectInfo.getRelevantDirectory());
 	}
 	
 	private int compileFixed() {
@@ -211,30 +216,33 @@ public class Defects4J implements Project {
 		return d4jOperation("compile", projectInfo.getBuggyDirectory());
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.Project#compile()
 	 */
 	@Override
 	public int compileModified() {
-	    return d4jOperation("compile", projectInfo.getModifiedDirectory());
+	    return d4jOperation("compile", projectInfo.getRelevantDirectory());
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.Project#test()
 	 */
 	@Override
 	public int test() {
-	    return d4jOperation("test", projectInfo.getModifiedDirectory());
+	    return d4jOperation("test", projectInfo.getRelevantDirectory());
 	}
 	
-	/* (non-Javadoc)
+	/* 
+	 * (non-Javadoc)
 	 * @see edu.washington.bugisolation.Project#reset()
 	 */
 	@Override
 	public void reset() {
         gitOperation (
-                "reset --hard " + "D4J_" + projectInfo.getModifiedName() + "_reltests"
-                , projectInfo.getModifiedDirectory());
-        gitOperation("clean -xfd", projectInfo.getModifiedDirectory());
+                "reset --hard " + "D4J_" + projectInfo.getRelevantName() + "_reltests"
+                , projectInfo.getRelevantDirectory());
+        gitOperation("clean -xfd", projectInfo.getRelevantDirectory());
 	}
 }
