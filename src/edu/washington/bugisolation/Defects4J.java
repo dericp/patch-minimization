@@ -1,5 +1,7 @@
 package edu.washington.bugisolation;
 
+import edu.washington.bugisolation.util.Utils;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,8 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
-
-import edu.washington.bugisolation.util.Utils;
 
 /**
  * The Defects4j class is used to perform all Defects4J operations required for

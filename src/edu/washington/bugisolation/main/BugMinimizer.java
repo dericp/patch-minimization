@@ -1,10 +1,15 @@
-package edu.washington.bugisolation;
+package edu.washington.bugisolation.main;
+
+import edu.washington.bugisolation.Defects4J;
+import edu.washington.bugisolation.Defects4JPI;
+import edu.washington.bugisolation.DeltaDebugging;
+import edu.washington.bugisolation.Project;
+import edu.washington.bugisolation.ProjectInfo;
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * Minimizes and isolates the bug between two versions of a program in the

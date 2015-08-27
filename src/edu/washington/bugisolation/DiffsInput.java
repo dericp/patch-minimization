@@ -1,10 +1,10 @@
 package edu.washington.bugisolation;
 
+import edu.washington.bugisolation.diffutils.UnifiedDiff;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * An input that allows for the manipulation of diffs in a unified diff.

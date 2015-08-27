@@ -1,16 +1,16 @@
 package edu.washington.bugisolation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import edu.washington.bugisolation.DDInput.InputType;
 import edu.washington.bugisolation.diffutils.Diff;
 import edu.washington.bugisolation.diffutils.Hunk;
 import edu.washington.bugisolation.diffutils.UnifiedDiff;
 import edu.washington.bugisolation.util.Utils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The DeltaDebugging class allows for the minimization of a diff/patch through

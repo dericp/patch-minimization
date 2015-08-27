@@ -1,10 +1,10 @@
 package edu.washington.bugisolation.diffutils;
 
+import edu.washington.bugisolation.util.Utils;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import edu.washington.bugisolation.util.Utils;
 
 /**
  * A diff denotes changes to a specific file.
