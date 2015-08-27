@@ -60,13 +60,13 @@ public class BugMinimizer {
         // can set the path manually
         // otherwise, the path should be set from the defects4j properties file
         unifiedDiff
-                .getDiffs()
-                .get(0)
-                .setFilePaths(
-                        d4jPI.getSrcDirectory()
-                                + d4jPI.getRelevantFilePath(".java"),
-                        d4jPI.getSrcDirectory()
-                                + d4jPI.getRelevantFilePath(".java"));
+        .getDiffs()
+        .get(0)
+        .setFilePaths(
+                d4jPI.getSrcDirectory()
+                + d4jPI.getRelevantFilePath(".java"),
+                d4jPI.getSrcDirectory()
+                + d4jPI.getRelevantFilePath(".java"));
 
         // exports the initial patch
         unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/"
