@@ -10,9 +10,6 @@ import java.util.Properties;
 
 /**
  * The ProjectInfo class stores all the information about the current project.
- *
- * @author dpang
- *
  */
 public class Defects4JPI implements ProjectInfo {
 

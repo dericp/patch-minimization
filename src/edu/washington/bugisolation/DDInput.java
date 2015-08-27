@@ -7,9 +7,6 @@ import edu.washington.bugisolation.diffutils.UnifiedDiff;
 /**
  * An interface that defines the functions needed for the delta debugging
  * process.
- *
- * @author Deric Hua Pang
- *
  */
 public interface DDInput {
 

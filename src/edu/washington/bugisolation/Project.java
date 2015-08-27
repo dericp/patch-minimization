@@ -5,9 +5,6 @@ import java.util.List;
 /**
  * A project interface that defines the functions needed to work with the bug
  * minimizer.
- *
- * @author Deric Hua Pang
- *
  */
 public interface Project {
 

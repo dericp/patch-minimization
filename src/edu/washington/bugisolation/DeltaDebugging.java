@@ -15,9 +15,6 @@ import edu.washington.bugisolation.util.Utils;
 /**
  * The DeltaDebugging class allows for the minimization of a diff/patch through
  * the process of the delta debugging algorithm.
- *
- * @author Deric Hua Pang
- *
  */
 public class DeltaDebugging {
 

@@ -5,9 +5,6 @@ import java.util.List;
 /**
  * An interface that defines the information that the bug minimizer needs to
  * operate.
- *
- * @author Deric Hua pang
- *
  */
 public interface ProjectInfo {
 

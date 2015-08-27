@@ -9,9 +9,6 @@ import edu.washington.bugisolation.diffutils.UnifiedDiff;
 /**
  * Minimizes and isolates the bug between two versions of a program in the
  * Defects4J database.
- *
- * @author Deric Hua Pang
- *
  */
 public class BugMinimizer {
 

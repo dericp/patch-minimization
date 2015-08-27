@@ -13,9 +13,6 @@ import edu.washington.bugisolation.util.Utils;
 /**
  * The Defects4j class is used to perform all Defects4J operations required for
  * the bug minimization process.
- *
- * @author dpang
- *
  */
 public class Defects4J implements Project {
 

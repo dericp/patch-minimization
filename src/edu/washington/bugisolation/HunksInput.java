@@ -9,9 +9,6 @@ import edu.washington.bugisolation.diffutils.UnifiedDiff;
 
 /**
  * An input that allows for the manipulation of hunks in a unified diff.
- *
- * @author Deric Hua Pang
- *
  */
 public class HunksInput implements DDInput {
 
