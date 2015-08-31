@@ -49,9 +49,9 @@ public class LinesInput implements DDInput {
             int diffNumber, int hunkNumber) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
-        setRemovedElements();
         this.diffNumber = diffNumber;
         this.hunkNumber = hunkNumber;
+        setRemovedElements();
     }
 
     /**

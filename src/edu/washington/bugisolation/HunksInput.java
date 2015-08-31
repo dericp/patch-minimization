@@ -48,15 +48,15 @@ public class HunksInput implements DDInput {
             int diffNumber) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
-        removedElements = new HashSet<Integer>();
-        setRemovedElements();
         this.diffNumber = diffNumber;
+        setRemovedElements();
     }
 
     /**
      * Sets the elements that should be removed by removeElements().
      */
     private void setRemovedElements() {
+        removedElements = new HashSet<Integer>();
         for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks()
                 .size(); ++i) {
             removedElements.add(i);
