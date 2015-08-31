@@ -167,12 +167,10 @@ public class DeltaDebugging {
         if (input.getInputType() == InputType.DIFFS) {
             assert test(new DiffsInput(input.getUnifiedDiff(),
                     new ArrayList<Integer>())) == PASS;
-        }
-        if (input.getInputType() == InputType.HUNKS) {
+        } else if (input.getInputType() == InputType.HUNKS) {
             assert test(new HunksInput(input.getUnifiedDiff(),
                     new ArrayList<Integer>(), input.getDiffNumber())) == PASS;
-        }
-        if (input.getInputType() == InputType.LINES) {
+        } else if (input.getInputType() == InputType.LINES) {
             assert test(new LinesInput(input.getUnifiedDiff(),
                     new ArrayList<Integer>(), input.getDiffNumber(),
                     input.getHunkNumber())) == PASS;
@@ -211,19 +209,29 @@ public class DeltaDebugging {
 
                 DDInput complement = null;
 
+               /* switch(input.getInputType()) {
+                    case DIFFS:
+                     
+                        break;
+                    case HUNKS:
+                    
+                    case LINES:
+                    
+                    default:
+                } */
                 if (input.getInputType() == InputType.DIFFS) {
                     complement = new DiffsInput(input.getUnifiedDiff(),
                             minusIndices(circumstances, stop1, stop2));
-                }
-                if (input.getInputType() == InputType.HUNKS) {
+                } else if (input.getInputType() == InputType.HUNKS) {
                     complement = new HunksInput(input.getUnifiedDiff(),
                             minusIndices(circumstances, stop1, stop2),
                             input.getDiffNumber());
-                }
-                if (input.getInputType() == InputType.LINES) {
+                } else if (input.getInputType() == InputType.LINES) {
                     complement = new LinesInput(input.getUnifiedDiff(),
                             minusIndices(circumstances, stop1, stop2),
                             input.getDiffNumber(), input.getHunkNumber());
+                } else {
+                    
                 }
 
                 if (test(complement) == FAIL) {
