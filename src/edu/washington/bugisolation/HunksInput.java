@@ -1,6 +1,7 @@
 package edu.washington.bugisolation;
 
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.util.Utils;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -141,4 +142,22 @@ public class HunksInput implements DDInput {
         return hunkNumber;
     }
 
+    
+    public DDInput getEmptyInput() {
+        DDInput empty = new HunksInput(unifiedDiff, new ArrayList<Integer>(), diffNumber);
+        return empty;
+    }
+    public DDInput getComplement(int start, int stop) {
+        DDInput complement = new HunksInput(unifiedDiff,
+                Utils.minusIndices(circumstances, start, stop),
+                diffNumber);
+        return complement;
+    }
+    
+    public DDInput getCopy() {
+        DDInput copy = new HunksInput(unifiedDiff,
+                new ArrayList<Integer>(circumstances),
+                diffNumber);
+        return copy;
+    }
 }

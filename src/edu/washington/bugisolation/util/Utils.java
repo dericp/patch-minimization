@@ -203,4 +203,23 @@ public class Utils {
         return -1;
     }
 
+    /**
+     * Substracts a group of elements from a list.
+     *
+     * @param circumstances
+     *            the list to be modified
+     * @param start
+     *            the start index of the section to be removed, inclusive
+     * @param stop
+     *            the end index of the section to be removed, exclusive
+     * @return a list that excludes the elements between the start and stop
+     *         indices, inclusive and exclusive, respectively
+     */
+    public static <T> List<T> minusIndices(List<T> circumstances, int start,
+            int stop) {
+        List<T> ret = new ArrayList<T>();
+        ret.addAll(circumstances.subList(0, start));
+        ret.addAll(circumstances.subList(stop, circumstances.size()));
+        return ret;
+    }
 }

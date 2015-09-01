@@ -1,7 +1,9 @@
 package edu.washington.bugisolation;
 
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
+import edu.washington.bugisolation.util.Utils;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,5 +121,22 @@ public class DiffsInput implements DDInput {
     public int getDiffNumber() {
         // TODO Auto-generated method stub
         return diffNumber;
+    }
+    
+    public DDInput getEmptyInput() {
+        DDInput empty = new DiffsInput(unifiedDiff, new ArrayList<Integer>());
+        return empty;
+    }
+    
+    public DDInput getComplement(int start, int stop) {
+        DDInput complement = new DiffsInput(unifiedDiff,
+                Utils.minusIndices(circumstances, start, stop));
+        return complement;
+    }
+    
+    public DDInput getCopy() {
+        DDInput copy = new DiffsInput(unifiedDiff,
+                new ArrayList<Integer>(circumstances));
+        return copy;
     }
 }

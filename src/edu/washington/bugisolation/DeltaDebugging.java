@@ -1,10 +1,9 @@
 package edu.washington.bugisolation;
 
-import edu.washington.bugisolation.DDInput.InputType;
-import edu.washington.bugisolation.diffutils.Diff;
-import edu.washington.bugisolation.diffutils.Hunk;
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
 import edu.washington.bugisolation.util.Utils;
+import edu.washington.cs.dericp.diffutils.Diff;
+import edu.washington.cs.dericp.diffutils.Hunk;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,26 +64,6 @@ public class DeltaDebugging {
         }
 
         return subSets;
-    }
-
-    /**
-     * Substracts a group of elements from a list.
-     *
-     * @param circumstances
-     *            the list to be modified
-     * @param stop1
-     *            the start index of the section to be removed, inclusive
-     * @param stop2
-     *            the end index of the section to be removed, exclusive
-     * @return a list that excludes the elements between the start and stop
-     *         indices, inclusive and exclusive, respectively
-     */
-    private static <T> List<T> minusIndices(List<T> circumstances, int stop1,
-            int stop2) {
-        List<T> ret = new ArrayList<T>();
-        ret.addAll(circumstances.subList(0, stop1));
-        ret.addAll(circumstances.subList(stop2, circumstances.size()));
-        return ret;
     }
 
     /**
@@ -152,32 +131,22 @@ public class DeltaDebugging {
      *            the initial input that causes test() to fail
      * @param gran
      *            the granularity increase of the ddmin algorithm
-     * @return the relevant circumstances of the circumstances that was passed
-     *         in with input
+     * @return the relevant circumstances of the input
      */
-    public List<Integer> ddmin(DDInput input, Granularity gran) {
+    public List<Integer> getRelevantInput(DDInput input, Granularity gran) {
 
         System.out.println("***** Running ddmin *****");
         System.out.println("minimizing " + input.getInputType());
         System.out.println(input.getCircumstances().size()
                 + " initial elements");
+        
+        DDInput inputCopy = input.getCopy();
+        List<Integer> circumstances = inputCopy.getCircumstances();
 
-        List<Integer> circumstances = input.getCircumstances();
-
-        if (input.getInputType() == InputType.DIFFS) {
-            assert test(new DiffsInput(input.getUnifiedDiff(),
-                    new ArrayList<Integer>())) == PASS;
-        } else if (input.getInputType() == InputType.HUNKS) {
-            assert test(new HunksInput(input.getUnifiedDiff(),
-                    new ArrayList<Integer>(), input.getDiffNumber())) == PASS;
-        } else if (input.getInputType() == InputType.LINES) {
-            assert test(new LinesInput(input.getUnifiedDiff(),
-                    new ArrayList<Integer>(), input.getDiffNumber(),
-                    input.getHunkNumber())) == PASS;
-        }
+        assert test(inputCopy.getEmptyInput()) == PASS;
 
         assert test(input) == FAIL;
-
+        
         int granularity = 2;
 
         Map<Integer, Integer> indices = new HashMap<Integer, Integer>();
@@ -193,49 +162,27 @@ public class DeltaDebugging {
 
             loop: for (int i = 0; i < granularity; i++) {
 
-                int stop1 = i * (circumstances.size() / granularity);
-                int stop2 = stop1 + (circumstances.size() / granularity);
+                int start = i * (circumstances.size() / granularity);
+                int stop = start + (circumstances.size() / granularity);
 
-                System.out.println("stop1: " + stop1 + " stop2: " + stop2);
+                System.out.println("start: " + start + " stop: " + stop);
 
-                /* checks if the indices have been tested already */
-                if (indices.containsKey(stop1)
-                        && indices.get(stop1).equals(stop2)) {
+                // checks if the indices have been tested already
+                if (indices.containsKey(start)
+                        && indices.get(start).equals(stop)) {
                     System.out.println("FOUND REPEATED INDICES");
                     continue loop;
                 } else {
-                    indices.put(stop1, stop2);
+                    indices.put(start, stop);
                 }
 
-                DDInput complement = null;
-
-               /* switch(input.getInputType()) {
-                    case DIFFS:
-                     
-                        break;
-                    case HUNKS:
-                    
-                    case LINES:
-                    
-                    default:
-                } */
-                if (input.getInputType() == InputType.DIFFS) {
-                    complement = new DiffsInput(input.getUnifiedDiff(),
-                            minusIndices(circumstances, stop1, stop2));
-                } else if (input.getInputType() == InputType.HUNKS) {
-                    complement = new HunksInput(input.getUnifiedDiff(),
-                            minusIndices(circumstances, stop1, stop2),
-                            input.getDiffNumber());
-                } else if (input.getInputType() == InputType.LINES) {
-                    complement = new LinesInput(input.getUnifiedDiff(),
-                            minusIndices(circumstances, stop1, stop2),
-                            input.getDiffNumber(), input.getHunkNumber());
-                } else {
-                    
-                }
+                DDInput complement = inputCopy.getComplement(start, stop);
 
                 if (test(complement) == FAIL) {
                     circumstances = complement.getCircumstances();
+                    inputCopy.setCircumstances(circumstances,
+                            input.getDiffNumber(),
+                            input.getHunkNumber());
                     indices.clear();
                     granularity = Math.max(granularity - 1, 2);
                     some_complement_is_failing = true;
@@ -283,7 +230,7 @@ public class DeltaDebugging {
 
             DDInput minimizedPatch = new DiffsInput(unifiedDiff, circumstances);
 
-            minimizedPatch = new DiffsInput(unifiedDiff, ddmin(minimizedPatch,
+            minimizedPatch = new DiffsInput(unifiedDiff, getRelevantInput(minimizedPatch,
                     Granularity.LINEAR));
 
             minimizedPatch.removeElements();
@@ -328,7 +275,7 @@ public class DeltaDebugging {
                         circumstances.add(j);
                     }
                     minimizedPatch.setCircumstances(circumstances, i, -1);
-                    DDInput hunksInput = new HunksInput(unifiedDiff, ddmin(
+                    DDInput hunksInput = new HunksInput(unifiedDiff, getRelevantInput(
                             minimizedPatch, Granularity.EXPONENTIAL), i);
                     hunksInput.removeElements();
                     minimizedPatch = hunksInput;
@@ -375,7 +322,7 @@ public class DeltaDebugging {
                         circumstances.add(k);
                     }
                     minimizedPatch.setCircumstances(circumstances, i, j);
-                    DDInput linesInput = new LinesInput(unifiedDiff, ddmin(
+                    DDInput linesInput = new LinesInput(unifiedDiff, getRelevantInput(
                             minimizedPatch, Granularity.LINEAR), i, j);
                     linesInput.removeElements();
                     minimizedPatch = linesInput;

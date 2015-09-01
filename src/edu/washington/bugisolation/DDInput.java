@@ -1,6 +1,6 @@
 package edu.washington.bugisolation;
 
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 import java.util.List;
 
@@ -34,25 +34,19 @@ public interface DDInput {
      * @return the list of circumstances associated with this input
      */
     public List<Integer> getCircumstances();
-
+    
     /**
      * Sets the circumstances to be considered by this input.
      *
      * @param circumstances
      *            the new list of circumstances to be considered
-     * @param DiffNumber
+     * @param diffNumber
      *            the relevant diff number, -1 if irrelevant
      * @param hunkNumber
      *            the relevant hunk number, -1 if irrelevant
      */
-    public void setCircumstances(List<Integer> circumstances, int DiffNumber,
+    public void setCircumstances(List<Integer> circumstances, int diffNumber,
             int hunkNumber);
-
-    /**
-     * Removes all irrelevant elements -- those that are not noted by the list
-     * of circumstances.
-     */
-    public void removeElements();
 
     /**
      * Gets the relevant hunk number.
@@ -67,5 +61,17 @@ public interface DDInput {
      * @return the relevant diff number, -1 if irrelevant
      */
     public int getDiffNumber();
+    
+    /**
+     * Removes all irrelevant elements -- those that are not noted by the list
+     * of circumstances.
+     */
+    public void removeElements();
+    
+    public DDInput getEmptyInput();
+    
+    public DDInput getCopy();
+    
+    public DDInput getComplement(int start, int stop);
 
 }

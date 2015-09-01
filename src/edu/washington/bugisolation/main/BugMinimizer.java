@@ -5,7 +5,7 @@ import edu.washington.bugisolation.Defects4JPI;
 import edu.washington.bugisolation.DeltaDebugging;
 import edu.washington.bugisolation.Project;
 import edu.washington.bugisolation.ProjectInfo;
-import edu.washington.bugisolation.diffutils.UnifiedDiff;
+import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 import java.io.BufferedReader;
 import java.io.IOException;
