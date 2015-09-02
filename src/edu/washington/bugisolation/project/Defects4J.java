@@ -1,4 +1,4 @@
-package edu.washington.bugisolation;
+package edu.washington.bugisolation.project;
 
 import edu.washington.bugisolation.util.Utils;
 

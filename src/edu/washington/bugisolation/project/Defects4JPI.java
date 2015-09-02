@@ -1,4 +1,4 @@
-package edu.washington.bugisolation;
+package edu.washington.bugisolation.project;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

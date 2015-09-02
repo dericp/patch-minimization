@@ -1,4 +1,4 @@
-package edu.washington.bugisolation;
+package edu.washington.bugisolation.input;
 
 import edu.washington.bugisolation.util.Utils;
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * An input that allows for the manipulation of diffs in a unified diff.
+ * An input that allows for the manipulation of hunks in a unified diff.
  */
-public class DiffsInput implements DDInput {
+public class HunksInput implements DDInput {
 
     private UnifiedDiff unifiedDiff;
     private List<Integer> circumstances;
@@ -20,17 +20,36 @@ public class DiffsInput implements DDInput {
     private int hunkNumber;
 
     /**
-     * Constructs a new DiffsInput.
+     * Constructs a new HunksInput where all fields other than unifiedDiff are
+     * set to their default irrelevant values. Circumstances should be set later
+     * by setCircumstances().
+     *
+     * @param unifiedDiff
+     *            the unified diff relevant to this input
+     */
+    public HunksInput(UnifiedDiff unifiedDiff) {
+        this.unifiedDiff = new UnifiedDiff(unifiedDiff);
+        circumstances = new ArrayList<Integer>();
+        removedElements = new HashSet<Integer>();
+        diffNumber = -1;
+        hunkNumber = -1;
+    }
+
+    /**
+     * Constructs a new HunksInput.
      *
      * @param unifiedDiff
      *            the unified diff relevant to this input
      * @param circumstances
-     *            a list of diff numbers relevant to this input
+     *            a list of hunk numbers relevant to this input
+     * @param diffNumber
+     *            the diff number relevant to this input
      */
-    public DiffsInput(UnifiedDiff unifiedDiff, List<Integer> circumstances) {
+    public HunksInput(UnifiedDiff unifiedDiff, List<Integer> circumstances,
+            int diffNumber) {
         this.unifiedDiff = new UnifiedDiff(unifiedDiff);
         this.circumstances = circumstances;
-        removedElements = new HashSet<Integer>();
+        this.diffNumber = diffNumber;
         setRemovedElements();
     }
 
@@ -38,7 +57,9 @@ public class DiffsInput implements DDInput {
      * Sets the elements that should be removed by removeElements().
      */
     private void setRemovedElements() {
-        for (int i = 0; i < unifiedDiff.getDiffs().size(); ++i) {
+        removedElements = new HashSet<Integer>();
+        for (int i = 0; i < unifiedDiff.getDiffs().get(diffNumber).getHunks()
+                .size(); ++i) {
             removedElements.add(i);
         }
         removedElements.removeAll(circumstances);
@@ -51,7 +72,7 @@ public class DiffsInput implements DDInput {
      */
     @Override
     public InputType getInputType() {
-        return InputType.DIFFS;
+        return InputType.HUNKS;
     }
 
     /*
@@ -71,8 +92,7 @@ public class DiffsInput implements DDInput {
      */
     @Override
     public List<Integer> getCircumstances() {
-        // TODO Auto-generated method stub
-        return null;
+        return circumstances;
     }
 
     /*
@@ -98,8 +118,18 @@ public class DiffsInput implements DDInput {
     @Override
     public void removeElements() {
         for (int index : removedElements) {
-            unifiedDiff.removeDiff(index);
+            unifiedDiff.removeHunk(diffNumber, index);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.washington.bugisolation.DDInput#getDiffNumber()
+     */
+    @Override
+    public int getDiffNumber() {
+        return diffNumber;
     }
 
     /*
@@ -114,21 +144,10 @@ public class DiffsInput implements DDInput {
 
     /*
      * (non-Javadoc)
-     *
-     * @see edu.washington.bugisolation.DDInput#getDiffNumber()
-     */
-    @Override
-    public int getDiffNumber() {
-        // TODO Auto-generated method stub
-        return diffNumber;
-    }
-    
-    /*
-     * (non-Javadoc)
      * @see edu.washington.bugisolation.DDInput#getEmptyInput()
      */
     public DDInput getEmptyInput() {
-        DDInput empty = new DiffsInput(unifiedDiff, new ArrayList<Integer>());
+        DDInput empty = new HunksInput(unifiedDiff, new ArrayList<Integer>(), diffNumber);
         return empty;
     }
     
@@ -137,8 +156,9 @@ public class DiffsInput implements DDInput {
      * @see edu.washington.bugisolation.DDInput#getComplement(int, int)
      */
     public DDInput getComplement(int start, int stop) {
-        DDInput complement = new DiffsInput(unifiedDiff,
-                Utils.minusIndices(circumstances, start, stop));
+        DDInput complement = new HunksInput(unifiedDiff,
+                Utils.minusIndices(circumstances, start, stop),
+                diffNumber);
         return complement;
     }
     
@@ -147,8 +167,9 @@ public class DiffsInput implements DDInput {
      * @see edu.washington.bugisolation.DDInput#getCopy()
      */
     public DDInput getCopy() {
-        DDInput copy = new DiffsInput(unifiedDiff,
-                new ArrayList<Integer>(circumstances));
+        DDInput copy = new HunksInput(unifiedDiff,
+                new ArrayList<Integer>(circumstances),
+                diffNumber);
         return copy;
     }
 }

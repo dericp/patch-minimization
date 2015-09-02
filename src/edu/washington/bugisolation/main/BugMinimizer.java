@@ -1,10 +1,10 @@
 package edu.washington.bugisolation.main;
 
-import edu.washington.bugisolation.Defects4J;
-import edu.washington.bugisolation.Defects4JPI;
 import edu.washington.bugisolation.DeltaDebugging;
-import edu.washington.bugisolation.Project;
-import edu.washington.bugisolation.ProjectInfo;
+import edu.washington.bugisolation.project.Defects4J;
+import edu.washington.bugisolation.project.Defects4JPI;
+import edu.washington.bugisolation.project.Project;
+import edu.washington.bugisolation.project.ProjectInfo;
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 
 import java.io.BufferedReader;

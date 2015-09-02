@@ -1,4 +1,4 @@
-package edu.washington.bugisolation;
+package edu.washington.bugisolation.input;
 
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
 

@@ -1,5 +1,11 @@
 package edu.washington.bugisolation;
 
+import edu.washington.bugisolation.input.DDInput;
+import edu.washington.bugisolation.input.DiffsInput;
+import edu.washington.bugisolation.input.HunksInput;
+import edu.washington.bugisolation.input.LinesInput;
+import edu.washington.bugisolation.project.Project;
+import edu.washington.bugisolation.project.ProjectInfo;
 import edu.washington.bugisolation.util.Utils;
 import edu.washington.cs.dericp.diffutils.Diff;
 import edu.washington.cs.dericp.diffutils.Hunk;
