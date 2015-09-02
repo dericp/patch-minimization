@@ -11,33 +11,33 @@ public interface Project {
     /**
      * Checks out the two versions of the project.
      */
-    public abstract void checkout();
+    public void checkout();
 
     /**
      * Compiles the current project.
      *
      * @return the exit value of the compile process
      */
-    public abstract int compileModified();
+    public int compileModified();
 
     /**
      * Runs the test suite on the current project.
      *
      * @return the exit value of the test process
      */
-    public abstract int test();
+    public int test();
 
     /**
      * Gets the failing test for the current project.
      *
      * @return the failing tests for the current project
      */
-    public abstract List<String> getFailingTests();
+    public List<String> getFailingTests();
 
     /**
      * Generates the initial patch for the project.
      */
-    public abstract void generatePatch();
+    public void generatePatch();
 
     /**
      * Applies the generated patch to either the buggy or fixed version,
@@ -45,11 +45,11 @@ public interface Project {
      *
      * @return the exit value of the apply process
      */
-    public abstract int applyPatch();
+    public int applyPatch();
 
     /**
      * Resets the current project to its checkout state.
      */
-    public abstract void reset();
+    public void reset();
 
 }

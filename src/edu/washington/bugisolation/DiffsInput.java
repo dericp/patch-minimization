@@ -123,17 +123,29 @@ public class DiffsInput implements DDInput {
         return diffNumber;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getEmptyInput()
+     */
     public DDInput getEmptyInput() {
         DDInput empty = new DiffsInput(unifiedDiff, new ArrayList<Integer>());
         return empty;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getComplement(int, int)
+     */
     public DDInput getComplement(int start, int stop) {
         DDInput complement = new DiffsInput(unifiedDiff,
                 Utils.minusIndices(circumstances, start, stop));
         return complement;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getCopy()
+     */
     public DDInput getCopy() {
         DDInput copy = new DiffsInput(unifiedDiff,
                 new ArrayList<Integer>(circumstances));

@@ -145,10 +145,19 @@ public class LinesInput implements DDInput {
         return diffNumber;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getEmptyInput()
+     */
     public DDInput getEmptyInput() {
         DDInput empty = new LinesInput(unifiedDiff, new ArrayList<Integer>(), diffNumber, hunkNumber);
         return empty;
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getComplement(int, int)
+     */
     public DDInput getComplement(int start, int stop) {
         DDInput complement = new LinesInput(unifiedDiff,
                 Utils.minusIndices(circumstances, start, stop),
@@ -157,6 +166,10 @@ public class LinesInput implements DDInput {
         return complement;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see edu.washington.bugisolation.DDInput#getCopy()
+     */
     public DDInput getCopy() {
         DDInput copy = new LinesInput(unifiedDiff,
                 new ArrayList<Integer>(circumstances),
