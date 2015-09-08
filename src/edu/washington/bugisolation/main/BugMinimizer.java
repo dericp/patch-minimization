@@ -74,8 +74,10 @@ public class BugMinimizer {
                 + d4jPI.getRelevantFilePath(".java"));
 
         // exports the initial patch
-        unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data/"
-                + d4jPI.getFullProjectName() + "_" + d4jPI.isFixedToBuggy()
+        unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE + "defects4j-data-local/"
+                + d4jPI.getFullProjectName() + '/'
+                + d4jPI.getFullProjectName()
+                + "_" + d4jPI.isFixedToBuggy()
                 + ".diff");
 
         // minimize the diffs

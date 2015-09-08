@@ -241,7 +241,7 @@ public class DeltaDebugging {
 
             minimizedPatch.removeElements();
             minimizedPatch.getUnifiedDiff().exportUnifiedDiff(
-                    ProjectInfo.WORKSPACE + "defects4j-data/"
+                    ProjectInfo.WORKSPACE + "defects4j-data-local/"
                             + projectInfo.getFullProjectName() + "_"
                             + Boolean.toString(projectInfo.isFixedToBuggy())
                             + "_minDiffs.diff");
@@ -249,7 +249,9 @@ public class DeltaDebugging {
         } else {
             System.out.println("only one diff, no need to minimize");
             unifiedDiff.exportUnifiedDiff(ProjectInfo.WORKSPACE
-                    + "defects4j-data/" + projectInfo.getFullProjectName()
+                    + "defects4j-data-local/" 
+                    + projectInfo.getFullProjectName() + '/'
+                    + projectInfo.getFullProjectName()
                     + "_" + Boolean.toString(projectInfo.isFixedToBuggy())
                     + "_minDiffs.diff");
             return unifiedDiff;
@@ -291,7 +293,8 @@ public class DeltaDebugging {
             }
         }
         minimizedPatch.getUnifiedDiff().exportUnifiedDiff(
-                ProjectInfo.WORKSPACE + "defects4j-data/"
+                ProjectInfo.WORKSPACE + "defects4j-data-local/"
+                        + projectInfo.getFullProjectName() + '/'
                         + projectInfo.getFullProjectName() + "_"
                         + Boolean.toString(projectInfo.isFixedToBuggy())
                         + "_minHunks.diff");
@@ -336,7 +339,8 @@ public class DeltaDebugging {
             }
         }
         minimizedPatch.getUnifiedDiff().exportUnifiedDiff(
-                ProjectInfo.WORKSPACE + "defects4j-data/"
+                ProjectInfo.WORKSPACE + "defects4j-data-local/"
+                        + projectInfo.getFullProjectName() + '/'
                         + projectInfo.getFullProjectName() + "_"
                         + Boolean.toString(projectInfo.isFixedToBuggy())
                         + "_minLines.diff");

@@ -8,7 +8,7 @@ import java.util.List;
  */
 public interface ProjectInfo {
 
-    public static final String D4J_LOCATION = "sh /Users/dpang/workspace/defects4j-github/defects4j.sh";
+    public static final String D4J_LOCATION = "sh /Users/dpang/workspace/defects4j-refactoring/defects4j.sh";
     public static final String WORKSPACE = "/Users/dpang/workspace/";
 
     /**
