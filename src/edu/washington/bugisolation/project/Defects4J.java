@@ -101,8 +101,12 @@ public class Defects4J implements Project {
         System.out.println("Checking out buggy version of the project");
         d4jOperation(
                 "checkout -p " + projectInfo.getProjectName() + " -v "
-                        + projectInfo.getProjectVersion() + "b" + " -w "
-                        + projectInfo.getBuggyName(), ProjectInfo.WORKSPACE);
+                + projectInfo.getProjectVersion() + "f" + " -w "
+                + projectInfo.getBuggyName(), ProjectInfo.WORKSPACE);
+        gitOperation(
+                "checkout " + "D4J_" + projectInfo.getFullProjectName()
+                + "_PRE_FIX_REVISION" + " -- " + projectInfo.getSrcDirectory(),
+                projectInfo.getBuggyDirectory());
         compileBuggy();
     }
 
