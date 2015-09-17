@@ -87,7 +87,10 @@ public class Defects4J implements Project {
         gitOperation("tag D4J_" + projectInfo.getBuggyName() + "_reltests",
                 projectInfo.getBuggyDirectory());
     }
-
+    
+    /**
+     * Checks out the fixed version of the project.
+     */
     private void checkoutFixed() {
         System.out.println("Checking out fixed version of the project");
         d4jOperation(
@@ -96,7 +99,10 @@ public class Defects4J implements Project {
                         + projectInfo.getFixedName(), ProjectInfo.WORKSPACE);
         compileFixed();
     }
-
+    
+    /**
+     * Checks out the buggy version of the project.
+     */
     private void checkoutBuggy() {
         System.out.println("Checking out buggy version of the project");
         d4jOperation(
