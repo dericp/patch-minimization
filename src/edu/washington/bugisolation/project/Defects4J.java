@@ -87,7 +87,7 @@ public class Defects4J implements Project {
         gitOperation("tag D4J_" + projectInfo.getBuggyName() + "_reltests",
                 projectInfo.getBuggyDirectory());
     }
-    
+
     /**
      * Checks out the fixed version of the project.
      */
@@ -99,7 +99,7 @@ public class Defects4J implements Project {
                         + projectInfo.getFixedName(), ProjectInfo.WORKSPACE);
         compileFixed();
     }
-    
+
     /**
      * Checks out the buggy version of the project.
      */
@@ -116,6 +116,11 @@ public class Defects4J implements Project {
         compileBuggy();
     }
 
+    /**
+    * Sets the tests that should be excluded in the defects4j.build.properties
+    * file. The excluded tests are the ones that do not relate to the bug
+    * fixed in the current version of the project.
+    */
     private void setExcludedTests() {
         System.out.println("Setting excluded tests");
 
