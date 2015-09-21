@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
  * Minimizes and isolates the bug between two versions of a program in the
  * Defects4J database.
  */
-public class BugMinimizer {
+public class Defects4JMain {
 
     public static void main(String[] args) throws IOException {
 
