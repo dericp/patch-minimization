@@ -1,5 +1,8 @@
 package edu.washington.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -9,8 +12,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class refactoringRemoval {
     
-    public static void removeWhiteSpace() {
-        throw new NotImplementedException();
+    public static List<String>  removeWhiteSpace(List<String> file) {
+        List<String> ret = new ArrayList<String>();
+        
+        for (String line : file) {
+            if (!line.isEmpty()) {
+                ret.add(line);
+            }
+        }
+        
+        return ret;
     }
     
     public static void removeCommentsDocumntation() {
