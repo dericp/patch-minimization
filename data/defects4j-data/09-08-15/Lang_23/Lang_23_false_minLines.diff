@@ -1,0 +1,34 @@
+diff --git a/home/dericp/workspace/Lang_23_buggy/src/main/java/org/apache/commons/lang3/text/ExtendedMessageFormat.java b/home/dericp/workspace/Lang_23_fixed/src/main/java/org/apache/commons/lang3/text/ExtendedMessageFormat.java
+index e4742ad..55ee7d1 100644
+--- a/src/main/java/org/apache/commons/lang3/text/ExtendedMessageFormat.java
++++ b/src/main/java/org/apache/commons/lang3/text/ExtendedMessageFormat.java
+@@ -25,6 +25,7 @@ import java.util.Iterator;
+ import java.util.Locale;
+ import java.util.Map;
+ 
++import org.apache.commons.lang3.ObjectUtils;
+ import org.apache.commons.lang3.Validate;
+ 
+ /**
+@@ -69,6 +70,7 @@ import org.apache.commons.lang3.Validate;
+  */
+ public class ExtendedMessageFormat extends MessageFormat {
+     private static final long serialVersionUID = -2362048321261811743L;
++    private static final int HASH_SEED = 31;
+ 
+     private static final String DUMMY_PATTERN = "";
+     private static final String ESCAPED_QUOTE = "''";
+@@ -254,6 +256,13 @@ public class ExtendedMessageFormat extends MessageFormat {
+     }
+ 
+     /**
++     */
++    public int hashCode() {
++        int result = super.hashCode();
++        result = HASH_SEED * result + ObjectUtils.hashCode(registry);
++        return result;
++    }
++    /**
+      * Get a custom format from a format description.
+      * 
+      * @param desc String

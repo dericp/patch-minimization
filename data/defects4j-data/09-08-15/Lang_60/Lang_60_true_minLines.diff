@@ -1,0 +1,13 @@
+diff --git a/home/dericp/workspace/Lang_60_fixed/src/java/org/apache/commons/lang/text/StrBuilder.java b/home/dericp/workspace/Lang_60_buggy/src/java/org/apache/commons/lang/text/StrBuilder.java
+index 886d424..c7cbfb3 100644
+--- a/src/java/org/apache/commons/lang/text/StrBuilder.java
++++ b/src/java/org/apache/commons/lang/text/StrBuilder.java
+@@ -1727,7 +1727,7 @@ public class StrBuilder implements Cloneable {
+             return -1;
+         }
+         char[] thisBuf = buffer;
+-        for (int i = startIndex; i < size; i++) {
++        for (int i = startIndex; i < thisBuf.length; i++) {
+             if (thisBuf[i] == ch) {
+                 return i;
+             }

@@ -1,0 +1,17 @@
+diff --git a/home/dericp/workspace/Lang_56_fixed/src/java/org/apache/commons/lang/time/FastDateFormat.java b/home/dericp/workspace/Lang_56_buggy/src/java/org/apache/commons/lang/time/FastDateFormat.java
+index 756290f..ac96c58 100644
+--- a/src/java/org/apache/commons/lang/time/FastDateFormat.java
++++ b/src/java/org/apache/commons/lang/time/FastDateFormat.java
+@@ -137,11 +137,11 @@ public class FastDateFormat extends Format {
+     /**
+      * The parsed rules.
+      */
+-    private transient Rule[] mRules;
++    private Rule[] mRules;
+     /**
+      * The estimated maximum length.
+      */
+     private transient int mMaxLengthEstimate;
+ 
+     //-----------------------------------------------------------------------
+     /**

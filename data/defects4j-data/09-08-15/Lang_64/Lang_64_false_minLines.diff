@@ -1,0 +1,30 @@
+diff --git a/home/dericp/workspace/Lang_64_buggy/src/java/org/apache/commons/lang/enums/ValuedEnum.java b/home/dericp/workspace/Lang_64_fixed/src/java/org/apache/commons/lang/enums/ValuedEnum.java
+index bbd018c..419a0ea 100644
+--- a/src/java/org/apache/commons/lang/enums/ValuedEnum.java
++++ b/src/java/org/apache/commons/lang/enums/ValuedEnum.java
+@@ -15,6 +15,8 @@ @@ -15,6 +15,8 @@
+  */
+ package org.apache.commons.lang.enums;
+ 
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Method;
+ import java.util.Iterator;
+ import java.util.List;
+ 
+@@ -174,10 +176,16 @@ public abstract class ValuedEnum extends Enum {
+      * @throws NullPointerException if other is <code>null</code>
+      */
+     public int compareTo(Object other) {
++        if (other.getClass() != this.getClass()) {
++            if (other.getClass().getName().equals(this.getClass().getName())) {
++            }
++            throw new ClassCastException(
++                    "Different enum class '" + ClassUtils.getShortClassName(other.getClass()) + "'");
++        }
+         return iValue - ((ValuedEnum) other).iValue;
+     }
+ 
+     /**
+      * <p>Human readable description of this <code>Enum</code> item.</p>
+      *
+      * @return String in the form <code>type[name=value]</code>, for example:

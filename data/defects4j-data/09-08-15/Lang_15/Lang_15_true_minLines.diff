@@ -1,0 +1,14 @@
+diff --git a/home/dericp/workspace/Lang_15_fixed/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java b/home/dericp/workspace/Lang_15_buggy/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
+index 8db8abf..bf4942f 100644
+--- a/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
++++ b/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
+@@ -671,8 +671,8 @@ public class TypeUtils {
+         HashMap<TypeVariable<?>, Type> typeVarAssigns = subtypeVarAssigns == null ? new HashMap<TypeVariable<?>, Type>()
+                 : new HashMap<TypeVariable<?>, Type>(subtypeVarAssigns);
+ 
+         // has target class been reached?
+-        if (toClass.equals(cls)) {
++        if (cls.getTypeParameters().length > 0 || toClass.equals(cls)) {
+             return typeVarAssigns;
+         }
+ 

@@ -1,0 +1,15 @@
+diff --git a/home/dericp/workspace/Lang_35_fixed/src/main/java/org/apache/commons/lang3/ArrayUtils.java b/home/dericp/workspace/Lang_35_buggy/src/main/java/org/apache/commons/lang3/ArrayUtils.java
+index 3a543ce..79c80bd 100644
+--- a/src/main/java/org/apache/commons/lang3/ArrayUtils.java
++++ b/src/main/java/org/apache/commons/lang3/ArrayUtils.java
+@@ -3571,7 +3571,9 @@ public class ArrayUtils {
+         } else if (element != null) {
+             clss = element.getClass();
+         } else {
+-            throw new IllegalArgumentException("Array and element cannot both be null");            
++            // TODO this is not type-safe - see LANG-571
++            final T[] emptyArray = (T[]) new Object[] { null };
++            return emptyArray;
+         }
+         @SuppressWarnings("unchecked") // the add method creates an array of type clss, which is type T
+         final T[] newArray = (T[]) add(array, index, element, clss);

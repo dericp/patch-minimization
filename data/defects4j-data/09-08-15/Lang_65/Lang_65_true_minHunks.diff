@@ -1,0 +1,15 @@
+diff --git a/home/dericp/workspace/Lang_65_fixed/src/java/org/apache/commons/lang/time/DateUtils.java b/home/dericp/workspace/Lang_65_buggy/src/java/org/apache/commons/lang/time/DateUtils.java
+index 79c13f0..f042237 100644
+--- a/src/java/org/apache/commons/lang/time/DateUtils.java
++++ b/src/java/org/apache/commons/lang/time/DateUtils.java
+@@ -734,9 +734,7 @@ public class DateUtils {
+                 roundUp = offset > ((max - min) / 2);
+             }
+             //We need to remove this field
+-            if (offset != 0) {
+-                val.set(fields[i][0], val.get(fields[i][0]) - offset);
+-            }
++            val.set(fields[i][0], val.get(fields[i][0]) - offset);
+         }
+         throw new IllegalArgumentException("The field " + field + " is not supported");
+ 

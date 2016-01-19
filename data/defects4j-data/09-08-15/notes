@@ -1,0 +1,67 @@
+This data was collected from the version of Defects4J that correctly generates the initial patch.
+
+    1. ID
+    2. ID
+    3. false > true: false has an extra hunk, more analysis needed
+    4. ID
+    5. More analysis needed.
+    6. X stuck testing true
+    7. ID
+    8. X assertion fails
+    9. ID
+    10. ID
+    11. false has one extra line which is the else statement, find out why
+    12. true > false, more analysis needed
+    13. false >>> true, more analysis needed
+    14. false >> true, more analysis needed
+    15. X gets stuck testing on false
+    16. ID
+    17. X gets stuck testing on true
+    18. true > false, more analysis needed
+    19. false >>> true: false actually contains a comment line---linear DD failed
+    20. true > false: nearly identical, a few lines differ, more analysis needed
+    21. ID
+    22. true > false, more analysis needed
+    23. true > false, more analysis needed
+    24. false > true: true always returns false
+    25. X assertion fails
+    26. ID
+    27. ID
+    28. TECHNICALLY false > true: This is a good example of using resulting lines of code as a metric.
+    29. X assertion fails on false
+    30. X assertion fails on true
+    31. more analysis needed
+    32. Last hunks differ
+    33. Good example of change vs insertion
+    34. X assertion fails on false
+    35. false > true: strange comment stuff
+    36. ID
+    37. false > true, more analysis needed
+    38. ID
+    39. ID
+    40. false > true: true doesn't remove two unecessary ints
+    41. X strange building error...
+    42. ID
+    43. ID
+    44. ID
+    45. false > true: true doesn't remove unecssary variable resassignment
+    46. ID
+    47. ID
+    48. Are true and false doing the same thing here??
+    49. ID
+    50. true > false: second hunk differs
+    51. ID
+    52. false > true: confusing, need to look at source and tests
+    53. false > true: need to see source and tests
+    54. ID
+    55. false > true: false adds in whole if statement, true removes the if statement that wraps the logic
+    56. ID
+    57. ID
+    58. ID
+    59. false > true: good example of change vs insertion
+    60. false > true: false has extra hunk
+    61. false > true: true doesn't remove unecessary variable
+    62. false > true: false has extra hunk and true doesn't remove unecessary break
+    63. true >>> false
+    64. true > false: false doesn't account for return value---bad test?
+    65. false > true: false has extra hunk

@@ -1,0 +1,75 @@
+    These patches are the result of exponential diff and hunk granularity, and
+linear line granularity. These patches also minimized the already pre-minimized
+Defects4J patches. Some versions of Lang got stuck in an infinite loop during
+testing, in particular, versions 6, 15, 17, and 41.
+
+ID = identical
+X = failed to collect data
+        
+    1 ID
+    2 ID
+    3 false > true: false has extra hunks and lines
+    4 ID
+    5 same hunk, lines are different (huge hunk)
+    6 X
+    7 ID, comments are moved
+    8 X
+    9 X
+    10 X
+    11 false > true: false removes an else statement
+    12 true > false: true removes extra logic
+    13 false > true: false has extra hunks
+    14 ID
+    15 X
+    16 ID
+    17 X
+    18 interesting case, need to look at tests
+    19 false > true: false has two extra hunks and extra lines in ID hunk
+    20 true > false: true makes a StringBuilder
+    21 ID
+    22 true > false: true removes exception
+    23 false > true: is this the case where comments come in to play??
+    24 false > true: false has one extra change
+    25 X
+    26 ID
+    27 ID
+    28 flase > true: false creates char array
+    29 X
+    30 X
+    31 true > false: true removes a return
+    32 X
+    33 X
+    34 X
+    35 X
+    36 X
+    37 flase > true: false has extra exception logic
+    38 ID
+    39 ID
+    40 false > true: false adds two extra ints
+    41 X
+    42 false > true: false has extra refactoring
+    43 ID
+    44 ID
+    45 false > true: false reassigns a variable
+    46 ID, huge amount of changes
+    47 ID
+    48 true > false: true removes an else
+    49 ID
+    50 false > true: first hunk is ID, false has extra if statement
+    51 ID
+    52 strange case: true removes a break, false adds an out statement
+    53 flase > true: strange case, need to look at source code
+    54 ID
+    55 false > true: false adds if statement logic
+    56 false > true: false adds if statement logic
+    56 ID
+    57 ID
+    58 ID
+    59 false > true: false accounts for removing old method call
+    60 false > true: false has one more hunk
+    61 false > true: false adds int
+    62 false > true: false has one more hunk
+    63 true >>>>> false: false has 1 change, true has many
+    64 true > false: true removes if statement logic
+    65 false > true: false has one more hunk 
+    
