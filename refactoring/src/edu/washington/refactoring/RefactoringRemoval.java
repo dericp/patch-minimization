@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.washington.cs.dericp.diffutils.UnifiedDiff;
+import edu.washington.refactoring.util.Utils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -14,8 +15,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class RefactoringRemoval {
     
-    public static List<String> removeWhiteSpace() {
-        throw new NotImplementedException();
+    public static List<String> removeEmptyLines(String filePath) {
+        List<String> fileLines = Utils.fileToLines(filePath);
+        UnifiedDiff patch = new UnifiedDiff(fileLines);
+        
+        for (String s : fileLines) {
+            if ((s.startsWith("+") || s.startsWith("-")) && s.substring(1).trim().length() == 0) {
+                patch.removeChange(s);
+            }
+        }
+        return patch.exportPatchToLines();
     }
     
     public static void removeComments(UnifiedDiff unifiedDiff) {   
